@@ -1,0 +1,24 @@
+# Docker Compose Override for Development
+# This file extends docker-compose.yml with development-specific settings
+# Active by default when running: docker-compose up
+
+version: '3.8'
+
+services:
+  backend:
+    # Mount source code for hot-reload
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    # Use nodemon for auto-restart
+    command: npm run dev
+    environment:
+      NODE_ENV: development
+
+  frontend:
+    # Mount source code for hot-reload
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: development

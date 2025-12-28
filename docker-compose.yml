@@ -1,42 +1,89 @@
 version: '3.8'
 
 services:
+  # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
     container_name: place_nft_db
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: place_nft_1155
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-place_nft_1155}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # Backend API
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: place_nft_backend
+    restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "${BACKEND_PORT:-3000}:3000"
     environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/place_nft_1155
+      # Server
+      PORT: 3000
+      NODE_ENV: ${NODE_ENV:-development}
+      # Database - uses docker network hostname
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-place_nft_1155}
+      # Admin
+      ADMIN_API_KEY: ${ADMIN_API_KEY:-your-secure-admin-key}
+      # Blockchain
+      CONTRACT_ADDRESS: ${CONTRACT_ADDRESS:-}
+      ADMIN_PRIVATE_KEY: ${ADMIN_PRIVATE_KEY:-0x0000000000000000000000000000000000000000000000000000000000000001}
+      RPC_URL: ${RPC_URL:-https://rpc-amoy.polygon.technology}
+      CHAIN_ID: ${CHAIN_ID:-80002}
+      # IPFS
+      PINATA_API_KEY: ${PINATA_API_KEY:-}
+      PINATA_SECRET_KEY: ${PINATA_SECRET_KEY:-}
+      # Image Search
+      SERP_API_KEY: ${SERP_API_KEY:-}
+      # Frontend URL
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      # Community
+      TELEGRAM_GROUP_URL: ${TELEGRAM_GROUP_URL:-https://t.me/PlaceNFTGame}
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     volumes:
-      - ./backend:/app
-      - /app/node_modules
+      - backend_uploads:/app/uploads
 
+  # Frontend (Development mode)
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
     container_name: place_nft_frontend
+    restart: unless-stopped
     ports:
-      - "5173:5173"
+      - "${FRONTEND_PORT:-5173}:5173"
     environment:
-      - VITE_API_URL=http://localhost:3000/api
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:3000/api}
+      VITE_CONTRACT_ADDRESS: ${VITE_CONTRACT_ADDRESS:-}
+      VITE_CHAIN_ID: ${VITE_CHAIN_ID:-80002}
+      VITE_CHAIN_NAME: ${VITE_CHAIN_NAME:-Polygon Amoy Testnet}
+      VITE_RPC_URL: ${VITE_RPC_URL:-https://rpc-amoy.polygon.technology}
+      VITE_BLOCK_EXPLORER: ${VITE_BLOCK_EXPLORER:-https://amoy.polygonscan.com}
+      VITE_IPFS_GATEWAY: ${VITE_IPFS_GATEWAY:-https://gateway.pinata.cloud/ipfs}
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:
+    driver: local
+  backend_uploads:
+    driver: local
+
+networks:
+  default:
+    name: place_nft_network

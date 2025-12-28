@@ -1,0 +1,37 @@
+# Docker Compose for Production
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+version: '3.8'
+
+services:
+  backend:
+    restart: always
+    environment:
+      NODE_ENV: production
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_CONTRACT_ADDRESS: ${VITE_CONTRACT_ADDRESS}
+        VITE_CHAIN_ID: ${VITE_CHAIN_ID}
+        VITE_CHAIN_NAME: ${VITE_CHAIN_NAME}
+        VITE_RPC_URL: ${VITE_RPC_URL}
+        VITE_BLOCK_EXPLORER: ${VITE_BLOCK_EXPLORER}
+        VITE_IPFS_GATEWAY: ${VITE_IPFS_GATEWAY}
+    restart: always
+    ports:
+      - "80:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
