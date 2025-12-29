@@ -15,6 +15,7 @@ const Header = () => {
     { path: '/places', label: 'Places' },
     { path: '/auctions', label: 'Auctions' },
     { path: '/rankings', label: 'Rankings' },
+    { path: '/admin', label: 'Admin' },
   ];
 
   const isActive = (path) => {

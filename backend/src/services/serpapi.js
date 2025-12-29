@@ -69,13 +69,35 @@ const downloadImage = async (imageUrl) => {
       timeout: 30000,
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'image/*',
       },
+      validateStatus: (status) => status === 200,
     });
 
-    return Buffer.from(response.data);
+    const buffer = Buffer.from(response.data);
+
+    // Validate that we received actual image data
+    if (!buffer || buffer.length === 0) {
+      throw new Error('Empty buffer received');
+    }
+
+    // Check if buffer starts with valid image magic bytes
+    const magicBytes = buffer.slice(0, 4).toString('hex');
+    const isValidImage =
+      magicBytes.startsWith('ffd8ff') || // JPEG
+      magicBytes.startsWith('89504e47') || // PNG
+      magicBytes.startsWith('47494638') || // GIF
+      magicBytes.startsWith('52494646'); // WebP
+
+    if (!isValidImage) {
+      console.error('Invalid image format. Magic bytes:', magicBytes);
+      throw new Error('Invalid image format detected');
+    }
+
+    return buffer;
   } catch (error) {
     console.error('Image download error:', error.message);
-    throw new Error('IMAGE_SEARCH_ERROR: Failed to download image');
+    throw new Error(`IMAGE_DOWNLOAD_ERROR: ${error.message}`);
   }
 };
 

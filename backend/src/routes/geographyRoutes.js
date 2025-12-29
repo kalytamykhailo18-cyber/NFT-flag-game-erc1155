@@ -19,8 +19,4 @@ router.get('/regions/:id/municipalities', geographyController.getRegionMunicipal
 router.get('/municipalities/:id', geographyController.getMunicipality);
 router.get('/municipalities/:id/places', geographyController.getMunicipalityPlaces);
 
-// Rankings
-router.get('/rankings/users', geographyController.getUserRankings);
-router.get('/rankings/places', geographyController.getPlaceRankings);
-
 module.exports = router;

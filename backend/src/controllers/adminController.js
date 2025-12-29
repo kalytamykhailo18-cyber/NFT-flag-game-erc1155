@@ -666,7 +666,23 @@ const generateSlicesPreview = async (req, res, next) => {
 
     const searchQuery = `${municipality_name || ''} location ${latitude},${longitude}`;
     const imageUrl = await serpApiService.searchImage(searchQuery);
+
+    if (!imageUrl) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'IMAGE_NOT_FOUND', message: 'No image found for this location' },
+      });
+    }
+
     const imageBuffer = await serpApiService.downloadImage(imageUrl);
+
+    if (!imageBuffer || imageBuffer.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'IMAGE_DOWNLOAD_FAILED', message: 'Failed to download image' },
+      });
+    }
+
     const slicesData = await sliceGenerator.generateSlices(imageBuffer, pair_count || 2);
 
     // Return base64 previews
@@ -678,7 +694,16 @@ const generateSlicesPreview = async (req, res, next) => {
 
     res.json({ success: true, data: { previews, original_image: imageUrl } });
   } catch (error) {
-    next(error);
+    console.error('Generate slices preview error:', error);
+
+    // Return user-friendly error
+    return res.status(500).json({
+      success: false,
+      error: {
+        code: 'PREVIEW_GENERATION_FAILED',
+        message: error.message || 'Failed to generate slice preview',
+      },
+    });
   }
 };
 

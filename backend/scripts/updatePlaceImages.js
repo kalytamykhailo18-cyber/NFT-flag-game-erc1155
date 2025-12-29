@@ -366,14 +366,14 @@ async function processPlace(place) {
           place_id: place.id,
           pair_number: pairNum,
           slice_position: position,
-          image_uri: sliceImageUri,
-          price: place.category === 'premium' ? 0.01 : place.category === 'special' ? 0.007 : 0.005,
+          slice_uri: sliceImageUri,
+          price: place.category === 'premium' ? 0.01 : place.category === 'plus' ? 0.007 : 0.005,
         },
       });
 
       if (!created) {
         // Update existing slice with new image
-        await slice.update({ image_uri: sliceImageUri });
+        await slice.update({ slice_uri: sliceImageUri });
       }
 
       console.log(`      ✓ Slice ${pairNum}-${position}: ${sliceIpfsHash}`);

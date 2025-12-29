@@ -60,35 +60,27 @@ const getUserRankings = async (req, res, next) => {
  */
 const getPlaceRankings = async (req, res, next) => {
   try {
-    const places = await Place.findAll({
-      attributes: [
-        'id',
-        'name',
-        'token_id',
-        'category',
-        'is_claimed',
-        'claimed_by',
-        [
-          sequelize.literal(`(
-            SELECT COUNT(*)
-            FROM interests
-            WHERE interests.place_id = "Place"."id"
-          )`),
-          'interest_count'
-        ],
-      ],
-      order: [
-        [sequelize.literal('interest_count'), 'DESC'],
-        ['is_claimed', 'ASC'], // Unclaimed places ranked higher
-        ['id', 'ASC'],
-      ],
-      limit: 100,
-    });
+    const [places] = await sequelize.query(`
+      SELECT
+        p.id,
+        p.name,
+        p.token_id,
+        p.category,
+        p.is_claimed,
+        p.claimed_by,
+        COUNT(i.id) as interest_count
+      FROM places p
+      LEFT JOIN interests i ON p.id = i.place_id
+      GROUP BY p.id, p.name, p.token_id, p.category, p.is_claimed, p.claimed_by
+      ORDER BY interest_count DESC, p.is_claimed ASC, p.id ASC
+      LIMIT 100
+    `);
 
     // Add rank numbers
     const rankings = places.map((place, index) => ({
       rank: index + 1,
-      ...place.toJSON(),
+      ...place,
+      interest_count: parseInt(place.interest_count),
     }));
 
     res.json({ success: true, data: rankings });

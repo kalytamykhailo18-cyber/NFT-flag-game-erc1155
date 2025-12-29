@@ -152,41 +152,6 @@ const getMunicipalityPlaces = async (req, res, next) => {
   }
 };
 
-const getUserRankings = async (req, res, next) => {
-  try {
-    const users = await User.findAll({
-      order: [['total_places_claimed', 'DESC'], ['total_slices_owned', 'DESC']],
-      limit: 100,
-      attributes: ['id', 'wallet_address', 'username', 'total_places_claimed', 'total_slices_owned'],
-    });
-    res.json({ success: true, data: users });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getPlaceRankings = async (req, res, next) => {
-  try {
-    const places = await Place.findAll({
-      attributes: {
-        include: [
-          [sequelize.fn('COUNT', sequelize.col('interests.id')), 'interest_count'],
-        ],
-      },
-      include: [
-        { association: 'interests', attributes: [] },
-        { association: 'municipality' },
-      ],
-      group: ['Place.id', 'municipality.id'],
-      order: [[sequelize.literal('interest_count'), 'DESC']],
-      limit: 100,
-    });
-    res.json({ success: true, data: places });
-  } catch (error) {
-    next(error);
-  }
-};
-
 module.exports = {
   getCountries,
   getCountry,
@@ -195,6 +160,4 @@ module.exports = {
   getRegionMunicipalities,
   getMunicipality,
   getMunicipalityPlaces,
-  getUserRankings,
-  getPlaceRankings,
 };

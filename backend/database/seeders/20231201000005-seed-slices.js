@@ -2,9 +2,9 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // First get all places to know their pair_count
+    // First get all places to know their pair_count, category, and base_image_uri
     const places = await queryInterface.sequelize.query(
-      'SELECT id, pair_count FROM places ORDER BY id',
+      'SELECT id, pair_count, category, base_image_uri FROM places ORDER BY id',
       { type: Sequelize.QueryTypes.SELECT }
     );
 
@@ -12,14 +12,25 @@ module.exports = {
     let sliceId = 1;
 
     for (const place of places) {
+      // Extract IPFS hash from base_image_uri (format: ipfs://QmXXXXX...)
+      const baseImageHash = place.base_image_uri ? place.base_image_uri.replace('ipfs://', '') : null;
+
+      // Calculate price based on category
+      let slicePrice = 0.005; // standard
+      if (place.category === 'plus') {
+        slicePrice = 0.007;
+      } else if (place.category === 'premium') {
+        slicePrice = 0.01;
+      }
+
       for (let pairNum = 1; pairNum <= place.pair_count; pairNum++) {
-        // Left slice
+        // Left slice - use base image hash as slice URI
         slices.push({
           id: sliceId++,
           place_id: place.id,
           pair_number: pairNum,
           slice_position: 'left',
-          slice_uri: `ipfs://placeholder/place_${place.id}_pair${pairNum}_left.jpg`,
+          slice_uri: baseImageHash ? `ipfs://${baseImageHash}` : `ipfs://placeholder/place_${place.id}_pair${pairNum}_left.jpg`,
           image_sha256: null,
           latitude: null,
           longitude: null,
@@ -27,7 +38,7 @@ module.exports = {
           captured_at: new Date(),
           sequence: (pairNum - 1) * 2,
           zoom_level: 15,
-          price: 0.005,
+          price: slicePrice,
           is_owned: false,
           owned_by: null,
           owned_at: null,
@@ -36,13 +47,13 @@ module.exports = {
           updated_at: new Date(),
         });
 
-        // Right slice
+        // Right slice - use base image hash as slice URI
         slices.push({
           id: sliceId++,
           place_id: place.id,
           pair_number: pairNum,
           slice_position: 'right',
-          slice_uri: `ipfs://placeholder/place_${place.id}_pair${pairNum}_right.jpg`,
+          slice_uri: baseImageHash ? `ipfs://${baseImageHash}` : `ipfs://placeholder/place_${place.id}_pair${pairNum}_right.jpg`,
           image_sha256: null,
           latitude: null,
           longitude: null,
@@ -50,7 +61,7 @@ module.exports = {
           captured_at: new Date(),
           sequence: (pairNum - 1) * 2 + 1,
           zoom_level: 15,
-          price: 0.005,
+          price: slicePrice,
           is_owned: false,
           owned_by: null,
           owned_at: null,

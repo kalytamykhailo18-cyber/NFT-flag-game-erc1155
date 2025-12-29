@@ -74,6 +74,10 @@ const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disa
                         src={config.ipfsToHttp(slice.slice_uri)}
                         alt={`Slice ${pairNumber}-${position}`}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = `https://via.placeholder.com/300x200/1a1a1a/666666?text=Pair+${pairNumber}-${position === 1 ? 'Left' : 'Right'}`;
+                        }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
