@@ -26,7 +26,7 @@ require('dotenv').config();
 const axios = require('axios');
 const FormData = require('form-data');
 const sharp = require('sharp');
-const { sequelize, Place, Municipality, Region } = require('../database/models');
+const { sequelize, Place, PlacePhotoSlice, Municipality, Region } = require('../database/models');
 
 // API credentials
 const PINATA_API_KEY = process.env.PINATA_API_KEY;
@@ -178,6 +178,38 @@ async function generateFlagImage(placeName) {
 }
 
 /**
+ * Generate a slice image by cropping/modifying the base image
+ */
+async function generateSliceImage(baseImageBuffer, position, pairNumber) {
+  try {
+    const image = sharp(baseImageBuffer);
+    const metadata = await image.metadata();
+    const width = metadata.width || 600;
+    const height = metadata.height || 400;
+
+    // For left slice, take left half; for right slice, take right half
+    const halfWidth = Math.floor(width / 2);
+    const extractOptions = position === 'left'
+      ? { left: 0, top: 0, width: halfWidth, height }
+      : { left: halfWidth, top: 0, width: halfWidth, height };
+
+    // Add a slight color tint based on pair number to differentiate pairs
+    const hueRotate = (pairNumber * 30) % 360;
+
+    const sliceBuffer = await sharp(baseImageBuffer)
+      .extract(extractOptions)
+      .modulate({ hue: hueRotate })
+      .png()
+      .toBuffer();
+
+    return sliceBuffer;
+  } catch (error) {
+    console.log(`      [ERROR] Generate slice: ${error.message}`);
+    return null;
+  }
+}
+
+/**
  * Upload image to IPFS via Pinata
  */
 async function uploadToIPFS(imageBuffer, filename) {
@@ -294,13 +326,61 @@ async function processPlace(place) {
     console.log(`    ✓ Metadata: ${metadataHash}`);
   }
 
-  // Update database
+  // Update place in database
   await Place.update(
     { base_image_uri: baseImageUri, metadata_uri: metadataUri },
     { where: { id: place.id } }
   );
 
-  console.log(`    ✓ Database updated`);
+  console.log(`    ✓ Place database updated`);
+
+  // Generate and upload slice images
+  console.log(`    Generating slices for ${place.pair_count} pairs...`);
+
+  for (let pairNum = 1; pairNum <= place.pair_count; pairNum++) {
+    for (const position of ['left', 'right']) {
+      // Generate slice image from base image
+      const sliceBuffer = await generateSliceImage(imageBuffer, position, pairNum);
+      if (!sliceBuffer) {
+        console.log(`      [SKIP] Failed to generate slice ${pairNum}-${position}`);
+        continue;
+      }
+
+      // Upload slice to IPFS
+      const sliceIpfsHash = await uploadToIPFS(sliceBuffer, `place_${place.id}_pair${pairNum}_${position}.png`);
+      if (!sliceIpfsHash) {
+        console.log(`      [SKIP] Failed to upload slice ${pairNum}-${position}`);
+        continue;
+      }
+
+      const sliceImageUri = `ipfs://${sliceIpfsHash}`;
+
+      // Check if slice exists, update or create
+      const [slice, created] = await PlacePhotoSlice.findOrCreate({
+        where: {
+          place_id: place.id,
+          pair_number: pairNum,
+          slice_position: position,
+        },
+        defaults: {
+          place_id: place.id,
+          pair_number: pairNum,
+          slice_position: position,
+          image_uri: sliceImageUri,
+          price: place.category === 'premium' ? 0.01 : place.category === 'special' ? 0.007 : 0.005,
+        },
+      });
+
+      if (!created) {
+        // Update existing slice with new image
+        await slice.update({ image_uri: sliceImageUri });
+      }
+
+      console.log(`      ✓ Slice ${pairNum}-${position}: ${sliceIpfsHash}`);
+    }
+  }
+
+  console.log(`    ✓ All slices updated`);
   return { success: true, ipfsHash, metadataHash };
 }
 
@@ -363,6 +443,7 @@ async function main() {
     name: p.name,
     location_type: p.location_type,
     category: p.category,
+    pair_count: p.pair_count,
     base_image_uri: p.base_image_uri,
     municipality_name: p.municipality?.name || 'Unknown',
     region_name: p.municipality?.region?.name || 'Unknown',
