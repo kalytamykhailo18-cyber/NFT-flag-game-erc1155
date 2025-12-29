@@ -22,7 +22,7 @@ const generateSlices = async (imageBuffer, pairCount = 2) => {
     const { width, height } = metadata;
 
     // Calculate grid dimensions
-    // 2 columns (for slice positions 1 and 2)
+    // 2 columns (for slice positions 'left' and 'right')
     // pairCount rows (for each pair)
     const cols = 2;
     const rows = pairCount;
@@ -35,7 +35,7 @@ const generateSlices = async (imageBuffer, pairCount = 2) => {
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
         const pair_number = row + 1;
-        const slice_position = col + 1;
+        const slice_position = col === 0 ? 'left' : 'right';
 
         // Extract slice
         const left = col * sliceWidth;

@@ -11,7 +11,6 @@ import {
   clearNftResult,
   fetchAdminData,
   selectAdminMunicipalities,
-  selectNftGenerating,
   selectNftGenerationResult,
   selectAdminError,
 } from '../../store/slices/adminSlice';
@@ -19,7 +18,6 @@ import {
 const GeneratePlaceTab = () => {
   const dispatch = useDispatch();
   const municipalities = useSelector(selectAdminMunicipalities);
-  const generating = useSelector(selectNftGenerating);
   const result = useSelector(selectNftGenerationResult);
   const error = useSelector(selectAdminError);
 
@@ -38,6 +36,9 @@ const GeneratePlaceTab = () => {
   const [previewSlices, setPreviewSlices] = useState([]);
   const [minting, setMinting] = useState(false);
   const [mintResult, setMintResult] = useState(null);
+  const [checking, setChecking] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
+  const [creating, setCreating] = useState(false);
 
   // Auto-set category based on location_type
   const handleLocationTypeChange = (value) => {
@@ -59,6 +60,7 @@ const GeneratePlaceTab = () => {
       return;
     }
 
+    setChecking(true);
     try {
       const res = await dispatch(checkImageAvailability({
         latitude: parseFloat(formData.latitude),
@@ -72,10 +74,13 @@ const GeneratePlaceTab = () => {
       }
     } catch (err) {
       alert(err || 'Failed to check image availability');
+    } finally {
+      setChecking(false);
     }
   };
 
   const handleGeneratePreview = async () => {
+    setPreviewing(true);
     try {
       const res = await dispatch(generateSlicesPreview({
         latitude: parseFloat(formData.latitude),
@@ -88,10 +93,13 @@ const GeneratePlaceTab = () => {
       setStep(3);
     } catch (err) {
       alert(err || 'Failed to generate preview');
+    } finally {
+      setPreviewing(false);
     }
   };
 
   const handleCreate = async () => {
+    setCreating(true);
     try {
       await dispatch(createPlaceFromCoordinates({
         latitude: parseFloat(formData.latitude),
@@ -107,6 +115,8 @@ const GeneratePlaceTab = () => {
       setStep(4);
     } catch (err) {
       alert(err || 'Failed to create place');
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -229,10 +239,10 @@ const GeneratePlaceTab = () => {
 
           <button
             onClick={handleCheckImage}
-            disabled={generating || !formData.latitude || !formData.longitude || !formData.municipality_id}
+            disabled={checking || !formData.latitude || !formData.longitude || !formData.municipality_id}
             className="w-full py-3 bg-primary text-white rounded font-semibold hover:bg-primary/80 transition-colors disabled:opacity-50"
           >
-            {generating ? 'Checking...' : 'Check Image Availability'}
+            {checking ? 'Checking...' : 'Check Image Availability'}
           </button>
         </div>
       )}
@@ -296,10 +306,10 @@ const GeneratePlaceTab = () => {
             </button>
             <button
               onClick={handleGeneratePreview}
-              disabled={generating}
+              disabled={previewing}
               className="flex-1 py-3 bg-primary text-white rounded font-semibold hover:bg-primary/80 transition-colors disabled:opacity-50"
             >
-              {generating ? 'Generating...' : 'Preview Slices'}
+              {previewing ? 'Generating...' : 'Preview Slices'}
             </button>
           </div>
         </div>
@@ -312,13 +322,22 @@ const GeneratePlaceTab = () => {
 
           <div className="grid grid-cols-2 gap-4 mb-6">
             {previewSlices.map((slice, index) => (
-              <div key={index} className="aspect-square bg-dark rounded overflow-hidden">
-                {slice.preview_url ? (
-                  <img
-                    src={slice.preview_url}
-                    alt={`Slice ${slice.pair_number}-${slice.slice_position}`}
-                    className="w-full h-full object-cover"
-                  />
+              <div key={index} className="aspect-square bg-dark rounded overflow-hidden relative">
+                {slice.preview ? (
+                  <>
+                    <img
+                      src={slice.preview}
+                      alt={`Slice ${slice.pair_number}-${slice.slice_position}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="bg-black/60 backdrop-blur-sm px-4 py-2 rounded-lg">
+                        <p className="text-white font-semibold text-sm">
+                          Pair {slice.pair_number} - {slice.slice_position === 'left' ? 'Left' : 'Right'}
+                        </p>
+                      </div>
+                    </div>
+                  </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-500">
                     Pair {slice.pair_number}, Pos {slice.slice_position}
@@ -348,10 +367,10 @@ const GeneratePlaceTab = () => {
             </button>
             <button
               onClick={handleCreate}
-              disabled={generating}
+              disabled={creating}
               className="flex-1 py-3 bg-green-600 text-white rounded font-semibold hover:bg-green-700 transition-colors disabled:opacity-50"
             >
-              {generating ? 'Creating...' : 'Create Place'}
+              {creating ? 'Creating...' : 'Create Place'}
             </button>
           </div>
         </div>

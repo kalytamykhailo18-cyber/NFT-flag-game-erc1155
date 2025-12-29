@@ -172,6 +172,7 @@ export const adminUpdateSlice = (apiKey, id, data) => adminApi(apiKey).updateSli
 export const adminDeleteSlice = (apiKey, id) => adminApi(apiKey).deleteSlice(id);
 
 export const adminPlaceFromCoordinates = (apiKey, data) => adminApi(apiKey).placeFromCoordinates(data);
+export const adminCreatePlaceFromCoordinates = (apiKey, data) => adminApi(apiKey).placeFromCoordinates(data); // Alias
 export const adminCheckImageAvailability = (apiKey, data) => adminApi(apiKey).checkImageAvailability(data);
 export const adminGenerateSlicesPreview = (apiKey, data) => adminApi(apiKey).generateSlicesPreview(data);
 
@@ -239,6 +240,7 @@ export default {
   adminUpdateSlice,
   adminDeleteSlice,
   adminPlaceFromCoordinates,
+  adminCreatePlaceFromCoordinates,
   adminCheckImageAvailability,
   adminGenerateSlicesPreview,
   adminSeed,
