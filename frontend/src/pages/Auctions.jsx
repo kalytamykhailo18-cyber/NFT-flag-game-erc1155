@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAuctions, selectAuctions, selectAuctionLoading } from '../store/slices/auctionSlice';
+import IPFSImage from '../components/IPFSImage';
 import config from '../config';
 
 const Auctions = () => {
@@ -90,17 +91,12 @@ const Auctions = () => {
               <div className="flex items-center gap-6">
                 {/* Place Image */}
                 <div className="w-24 h-24 bg-dark rounded flex-shrink-0 overflow-hidden">
-                  {auction.place?.base_image_uri ? (
-                    <img
-                      src={config.ipfsToHttp(auction.place.base_image_uri)}
-                      alt={auction.place.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
-                      No Image
-                    </div>
-                  )}
+                  <IPFSImage
+                    uri={auction.place?.base_image_uri}
+                    alt={auction.place?.name || 'Place'}
+                    className="w-full h-full object-cover"
+                    fallbackText="No Image"
+                  />
                 </div>
 
                 {/* Auction Info */}

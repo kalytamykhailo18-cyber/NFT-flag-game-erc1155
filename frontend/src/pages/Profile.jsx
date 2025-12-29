@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import IPFSImage from '../components/IPFSImage';
 import config from '../config';
 import api from '../services/api';
 
@@ -161,17 +162,12 @@ const Profile = () => {
                 className="bg-dark-lighter border border-gray-800 rounded-lg overflow-hidden hover:border-gray-700 transition-colors"
               >
                 <div className="aspect-square bg-dark">
-                  {slice.slice_uri ? (
-                    <img
-                      src={config.ipfsToHttp(slice.slice_uri)}
-                      alt={`Slice ${slice.pair_number}-${slice.slice_position}`}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-500">
-                      No Image
-                    </div>
-                  )}
+                  <IPFSImage
+                    uri={slice.slice_uri}
+                    alt={`Slice ${slice.pair_number}-${slice.slice_position}`}
+                    className="w-full h-full object-cover"
+                    fallbackText="No Image"
+                  />
                 </div>
                 <div className="p-2">
                   <div className="text-white text-sm font-medium truncate">
@@ -200,17 +196,12 @@ const Profile = () => {
                 className="bg-dark-lighter border border-gray-800 rounded-lg overflow-hidden hover:border-gray-700 transition-colors"
               >
                 <div className="aspect-video bg-dark">
-                  {place.base_image_uri ? (
-                    <img
-                      src={config.ipfsToHttp(place.base_image_uri)}
-                      alt={place.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-500">
-                      No Image
-                    </div>
-                  )}
+                  <IPFSImage
+                    uri={place.base_image_uri}
+                    alt={place.name}
+                    className="w-full h-full object-cover"
+                    fallbackText="No Image"
+                  />
                 </div>
                 <div className="p-4">
                   <h3 className="text-white font-semibold">{place.name}</h3>

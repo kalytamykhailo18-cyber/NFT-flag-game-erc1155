@@ -16,10 +16,9 @@ const config = {
   BLOCK_EXPLORER: import.meta.env.VITE_BLOCK_EXPLORER || 'https://amoy.polygonscan.com',
 
   // IPFS - Multiple gateways for fallback
-  IPFS_GATEWAY: import.meta.env.VITE_IPFS_GATEWAY || 'https://gateway.pinata.cloud/ipfs',
+  IPFS_GATEWAY: import.meta.env.VITE_IPFS_GATEWAY || 'https://ipfs.io/ipfs',
   IPFS_GATEWAYS: [
     'https://ipfs.io/ipfs',
-    'https://cloudflare-ipfs.com/ipfs',
     'https://gateway.pinata.cloud/ipfs',
     'https://dweb.link/ipfs',
   ],

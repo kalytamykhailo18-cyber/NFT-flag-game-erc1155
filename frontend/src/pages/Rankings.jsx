@@ -3,6 +3,7 @@
  */
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import IPFSImage from '../components/IPFSImage';
 import config from '../config';
 import api from '../services/api';
 
@@ -188,17 +189,12 @@ const PlaceRankings = ({ rankings }) => {
                   className="flex items-center gap-3 hover:text-primary"
                 >
                   <div className="w-12 h-12 bg-dark rounded overflow-hidden flex-shrink-0">
-                    {place.base_image_uri ? (
-                      <img
-                        src={config.ipfsToHttp(place.base_image_uri)}
-                        alt={place.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
-                        -
-                      </div>
-                    )}
+                    <IPFSImage
+                      uri={place.base_image_uri}
+                      alt={place.name}
+                      className="w-full h-full object-cover"
+                      fallbackText="-"
+                    />
                   </div>
                   <div>
                     <div className="text-white font-medium">{place.name}</div>
