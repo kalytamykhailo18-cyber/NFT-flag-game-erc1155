@@ -33,6 +33,7 @@ const PlaceDetail = () => {
   const [claiming, setClaiming] = useState(false);
   const [interestLoading, setInterestLoading] = useState(false);
   const [hasInterest, setHasInterest] = useState(false);
+  const [hasActiveAuction, setHasActiveAuction] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -40,6 +41,13 @@ const PlaceDetail = () => {
       if (address) {
         dispatch(fetchUserProgress(address));
       }
+      // Check if there's an active auction for this place
+      api.getAuctions({ place_id: id, status: 'active' })
+        .then(response => {
+          const auctions = response.data || response;
+          setHasActiveAuction(auctions && auctions.length > 0);
+        })
+        .catch(() => setHasActiveAuction(false));
     }
   }, [dispatch, id, address]);
 
@@ -269,8 +277,8 @@ const PlaceDetail = () => {
                 : 'Complete all pairs to claim'}
             </button>
 
-            {/* Create Auction Button - Only show if user claimed this place */}
-            {place.is_claimed && place.claimer?.wallet_address?.toLowerCase() === address?.toLowerCase() && (
+            {/* Create Auction Button - Only show if user claimed this place and no active auction */}
+            {place.is_claimed && place.claimer?.wallet_address?.toLowerCase() === address?.toLowerCase() && !hasActiveAuction && (
               <Link
                 to="/auctions"
                 state={{ placeId: place.id, placeName: place.name }}
@@ -278,6 +286,13 @@ const PlaceDetail = () => {
               >
                 Create Auction
               </Link>
+            )}
+
+            {/* Show message if auction already exists */}
+            {place.is_claimed && place.claimer?.wallet_address?.toLowerCase() === address?.toLowerCase() && hasActiveAuction && (
+              <div className="w-full mt-3 py-3 rounded-lg font-medium text-center bg-gray-700 text-gray-300 border border-gray-600">
+                Active Auction Exists
+              </div>
             )}
           </div>
         </div>

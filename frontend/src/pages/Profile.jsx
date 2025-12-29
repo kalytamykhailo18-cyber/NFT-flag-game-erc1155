@@ -15,6 +15,7 @@ const Profile = () => {
   const [claimedPlaces, setClaimedPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('slices');
+  const [activeAuctions, setActiveAuctions] = useState(new Set());
 
   useEffect(() => {
     if (!isConnected || !address) return;
@@ -32,7 +33,14 @@ const Profile = () => {
 
         // Get claimed places
         const placesResponse = await api.getUserPlaces(address);
-        setClaimedPlaces(placesResponse.data || placesResponse || []);
+        const places = placesResponse.data || placesResponse || [];
+        setClaimedPlaces(places);
+
+        // Check for active auctions on claimed places
+        const auctionsResponse = await api.getAuctions({ status: 'active' });
+        const auctions = auctionsResponse.data || auctionsResponse || [];
+        const activePlaceIds = new Set(auctions.map(a => a.place_id));
+        setActiveAuctions(activePlaceIds);
       } catch (err) {
         console.error('Failed to fetch user data:', err);
       } finally {
@@ -227,13 +235,19 @@ const Profile = () => {
                     <span className="text-gray-300 text-sm">Token ID: {place.token_id}</span>
                     <span className="text-green-400 text-sm">Claimed</span>
                   </div>
-                  <Link
-                    to="/auctions"
-                    state={{ placeId: place.id, placeName: place.name }}
-                    className="block w-full mt-4 px-4 py-2 bg-primary text-white text-center rounded-lg hover:bg-primary/80 transition-colors"
-                  >
-                    Create Auction
-                  </Link>
+                  {!activeAuctions.has(place.id) ? (
+                    <Link
+                      to="/auctions"
+                      state={{ placeId: place.id, placeName: place.name }}
+                      className="block w-full mt-4 px-4 py-2 bg-primary text-white text-center rounded-lg hover:bg-primary/80 transition-colors"
+                    >
+                      Create Auction
+                    </Link>
+                  ) : (
+                    <div className="block w-full mt-4 px-4 py-2 bg-gray-700 text-gray-300 text-center rounded-lg border border-gray-600">
+                      Active Auction Exists
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

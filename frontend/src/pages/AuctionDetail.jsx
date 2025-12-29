@@ -67,6 +67,7 @@ const AuctionDetail = () => {
     ? Math.max(...auction.bids.map(b => parseFloat(b.amount)))
     : parseFloat(auction.min_price);
   const isActive = auction.status === 'active';
+  const isSeller = address && auction.seller?.wallet_address?.toLowerCase() === address.toLowerCase();
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -147,26 +148,34 @@ const AuctionDetail = () => {
 
             {isActive && (
               <div className="mt-6 space-y-4">
-                {/* Bid Input */}
-                <div>
-                  <label className="block text-gray-200 text-sm mb-2">Your Bid (MATIC)</label>
-                  <input
-                    type="number"
-                    step="0.001"
-                    value={bidAmount}
-                    onChange={(e) => setBidAmount(e.target.value)}
-                    placeholder={`Min: ${auction.min_price}`}
-                    className="w-full px-4 py-3 bg-dark border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-primary"
-                  />
-                </div>
+                {isSeller ? (
+                  <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded text-center">
+                    <div className="text-yellow-400">You cannot bid on your own auction</div>
+                  </div>
+                ) : (
+                  <>
+                    {/* Bid Input */}
+                    <div>
+                      <label className="block text-gray-200 text-sm mb-2">Your Bid (MATIC)</label>
+                      <input
+                        type="number"
+                        step="0.001"
+                        value={bidAmount}
+                        onChange={(e) => setBidAmount(e.target.value)}
+                        placeholder={`Min: ${auction.min_price}`}
+                        className="w-full px-4 py-3 bg-dark border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-primary"
+                      />
+                    </div>
 
-                <button
-                  onClick={handleBid}
-                  disabled={bidding || !isConnected}
-                  className="w-full py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/80 transition-colors disabled:opacity-50"
-                >
-                  {bidding ? 'Placing Bid...' : 'Place Bid'}
-                </button>
+                    <button
+                      onClick={handleBid}
+                      disabled={bidding || !isConnected}
+                      className="w-full py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/80 transition-colors disabled:opacity-50"
+                    >
+                      {bidding ? 'Placing Bid...' : 'Place Bid'}
+                    </button>
+                  </>
+                )}
               </div>
             )}
 

@@ -18,7 +18,7 @@ const getAuctions = async (req, res, next) => {
     const auctions = await Auction.findAll({
       where,
       include: [
-        { association: 'place', attributes: ['id', 'name', 'token_id', 'category'] },
+        { association: 'place', attributes: ['id', 'name', 'token_id', 'category', 'base_image_uri'] },
         { association: 'seller', attributes: ['id', 'wallet_address', 'username'] },
         { association: 'winner', attributes: ['id', 'wallet_address', 'username'] },
         { association: 'bids', attributes: ['id'] },
@@ -77,8 +77,10 @@ const createAuction = async (req, res, next) => {
       });
     }
 
-    // Check place exists and not claimed
-    const place = await Place.findByPk(place_id);
+    // Check place exists and is claimed
+    const place = await Place.findByPk(place_id, {
+      include: [{ association: 'claimer', attributes: ['id', 'wallet_address'] }],
+    });
     if (!place) {
       return res.status(404).json({
         success: false,
@@ -86,10 +88,19 @@ const createAuction = async (req, res, next) => {
       });
     }
 
-    if (place.is_claimed) {
+    // Only claimed places can be auctioned
+    if (!place.is_claimed) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'Cannot create auction for claimed place' },
+        error: { code: 'VALIDATION_ERROR', message: 'Only claimed places can be auctioned' },
+      });
+    }
+
+    // Verify the user creating auction is the claimer
+    if (!place.claimer || place.claimer.wallet_address.toLowerCase() !== wallet_address.toLowerCase()) {
+      return res.status(403).json({
+        success: false,
+        error: { code: 'FORBIDDEN', message: 'Only the claimer can auction this place' },
       });
     }
 
@@ -146,12 +157,22 @@ const placeBid = async (req, res, next) => {
       });
     }
 
-    const auction = await Auction.findByPk(auction_id);
+    const auction = await Auction.findByPk(auction_id, {
+      include: [{ association: 'seller', attributes: ['id', 'wallet_address'] }],
+    });
 
     if (!auction) {
       return res.status(404).json({
         success: false,
         error: { code: 'NOT_FOUND', message: 'Auction not found' },
+      });
+    }
+
+    // Prevent seller from bidding on their own auction
+    if (auction.seller && auction.seller.wallet_address.toLowerCase() === wallet_address.toLowerCase()) {
+      return res.status(403).json({
+        success: false,
+        error: { code: 'FORBIDDEN', message: 'You cannot bid on your own auction' },
       });
     }
 
