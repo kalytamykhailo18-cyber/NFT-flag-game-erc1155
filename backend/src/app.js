@@ -6,7 +6,7 @@ const cors = require('cors');
 const config = require('./config');
 const routes = require('./routes');
 const errorHandler = require('./middleware/errorHandler');
-const { sequelize } = require('./models');
+const { sequelize } = require('../database/models');
 
 const app = express();
 
@@ -33,11 +33,8 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log('Database connection established successfully.');
 
-    // Sync models (in development)
-    if (config.nodeEnv === 'development') {
-      await sequelize.sync({ alter: true });
-      console.log('Database models synchronized.');
-    }
+    // Tables are managed by migrations
+    console.log('Database ready.');
 
     app.listen(config.port, () => {
       console.log(`Server running on port ${config.port}`);

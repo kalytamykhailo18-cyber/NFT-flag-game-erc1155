@@ -2,7 +2,7 @@
  * Admin Controller
  * Handles all admin operations from Section 3.1
  */
-const { Country, Region, Municipality, Place, PlacePhotoSlice, User, sequelize } = require('../models');
+const { Country, Region, Municipality, Place, PlacePhotoSlice, User, sequelize } = require('../../database/models');
 const ipfsService = require('../services/ipfs');
 const serpApiService = require('../services/serpapi');
 const sliceGenerator = require('../services/sliceGenerator');

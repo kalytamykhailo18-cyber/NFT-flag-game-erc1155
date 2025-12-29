@@ -2,7 +2,7 @@
  * Geography Controller
  * Public read-only endpoints from Section 3.2
  */
-const { Country, Region, Municipality, Place, User, Interest, sequelize } = require('../models');
+const { Country, Region, Municipality, Place, User, Interest, sequelize } = require('../../database/models');
 
 const getCountries = async (req, res, next) => {
   try {

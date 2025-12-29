@@ -3,7 +3,7 @@
  * Endpoints from Section 3.2
  * Business logic from Section 4.2
  */
-const { Place, PlacePhotoSlice, User, UserPlaceSlice, Interest, sequelize } = require('../models');
+const { Place, PlacePhotoSlice, User, UserPlaceSlice, Interest, sequelize } = require('../../database/models');
 
 /**
  * Get slice detail

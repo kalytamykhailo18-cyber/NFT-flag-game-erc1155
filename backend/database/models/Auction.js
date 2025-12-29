@@ -1,7 +1,5 @@
-/**
- * Auction model
- * Schema from Section 2.8
- */
+'use strict';
+
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -14,58 +12,47 @@ module.exports = (sequelize) => {
     place_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: 'places',
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
     },
-    creator_id: {
+    seller_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: 'users',
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
     },
-    min_price: {
+    starting_price: {
       type: DataTypes.DECIMAL(18, 8),
       allowNull: false,
     },
-    max_price: {
+    current_price: {
       type: DataTypes.DECIMAL(18, 8),
-      allowNull: true,
+      allowNull: false,
+    },
+    min_increment: {
+      type: DataTypes.DECIMAL(18, 8),
+      allowNull: false,
+      defaultValue: 0.001,
     },
     start_time: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW,
     },
     end_time: {
       type: DataTypes.DATE,
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM('active', 'completed', 'cancelled'),
-      allowNull: false,
+      type: DataTypes.ENUM('active', 'ended', 'cancelled'),
       defaultValue: 'active',
     },
     winner_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      references: {
-        model: 'users',
-        key: 'id',
-      },
-      onDelete: 'SET NULL',
     },
-    final_price: {
-      type: DataTypes.DECIMAL(18, 8),
+    tx_hash: {
+      type: DataTypes.STRING(66),
       allowNull: true,
     },
   }, {
     tableName: 'auctions',
+    underscored: true,
     timestamps: true,
   });
 

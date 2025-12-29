@@ -1,7 +1,5 @@
-/**
- * Municipality model
- * Schema from Section 2.3
- */
+'use strict';
+
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -14,11 +12,6 @@ module.exports = (sequelize) => {
     region_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: 'regions',
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
     },
     name: {
       type: DataTypes.STRING(100),
@@ -34,6 +27,7 @@ module.exports = (sequelize) => {
     },
   }, {
     tableName: 'municipalities',
+    underscored: true,
     timestamps: true,
   });
 

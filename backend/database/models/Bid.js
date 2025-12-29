@@ -1,7 +1,5 @@
-/**
- * Bid model
- * Schema from Section 2.9
- */
+'use strict';
+
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -14,33 +12,23 @@ module.exports = (sequelize) => {
     auction_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: 'auctions',
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
     },
-    user_id: {
+    bidder_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: 'users',
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
     },
     amount: {
       type: DataTypes.DECIMAL(18, 8),
       allowNull: false,
     },
-    user_category: {
-      type: DataTypes.ENUM('standard', 'plus', 'premium'),
-      allowNull: false,
+    tx_hash: {
+      type: DataTypes.STRING(66),
+      allowNull: true,
     },
   }, {
     tableName: 'bids',
+    underscored: true,
     timestamps: true,
-    updatedAt: false,
   });
 
   return Bid;

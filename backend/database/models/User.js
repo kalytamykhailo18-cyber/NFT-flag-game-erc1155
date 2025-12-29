@@ -1,7 +1,5 @@
-/**
- * User model
- * Schema from Section 2.6
- */
+'use strict';
+
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -17,31 +15,24 @@ module.exports = (sequelize) => {
       unique: true,
     },
     username: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(50),
       allowNull: true,
     },
-    category: {
-      type: DataTypes.ENUM('standard', 'plus', 'premium'),
-      allowNull: false,
-      defaultValue: 'standard',
+    avatar_url: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
     total_slices_owned: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       defaultValue: 0,
     },
     total_places_claimed: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
-    reputation_score: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
       defaultValue: 0,
     },
   }, {
     tableName: 'users',
+    underscored: true,
     timestamps: true,
   });
 

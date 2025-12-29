@@ -3,7 +3,7 @@
  * Endpoints from Section 3.2
  * Business logic from Section 4.4
  */
-const { Auction, Bid, Place, User, sequelize } = require('../models');
+const { Auction, Bid, Place, User, sequelize } = require('../../database/models');
 const { Op } = require('sequelize');
 
 /**

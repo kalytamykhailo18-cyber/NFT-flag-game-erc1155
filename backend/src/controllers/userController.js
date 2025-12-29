@@ -2,7 +2,7 @@
  * User Controller
  * Endpoints from Section 3.2
  */
-const { User, Place, PlacePhotoSlice, UserPlaceSlice } = require('../models');
+const { User, Place, PlacePhotoSlice, UserPlaceSlice } = require('../../database/models');
 
 /**
  * Get or create user by wallet address

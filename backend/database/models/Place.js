@@ -1,8 +1,5 @@
-/**
- * Place model
- * Schema from Section 2.4
- * Replaces Flag from ERC-721 version
- */
+'use strict';
+
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -20,11 +17,6 @@ module.exports = (sequelize) => {
     municipality_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: 'municipalities',
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
     },
     name: {
       type: DataTypes.STRING(200),
@@ -36,22 +28,18 @@ module.exports = (sequelize) => {
     },
     latitude: {
       type: DataTypes.DECIMAL(10, 8),
-      allowNull: false,
+      allowNull: true,
     },
     longitude: {
       type: DataTypes.DECIMAL(11, 8),
-      allowNull: false,
+      allowNull: true,
     },
     location_type: {
       type: DataTypes.STRING(50),
-      allowNull: false,
-      validate: {
-        isIn: [['standardlocation', 'pluslocation', 'premiumlocation']],
-      },
+      allowNull: true,
     },
     category: {
-      type: DataTypes.ENUM('standard', 'plus', 'premium'),
-      allowNull: false,
+      type: DataTypes.ENUM('standard', 'special', 'premium'),
       defaultValue: 'standard',
     },
     price: {
@@ -78,22 +66,15 @@ module.exports = (sequelize) => {
     },
     is_minted: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       defaultValue: false,
     },
     is_claimed: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       defaultValue: false,
     },
     claimed_by: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      references: {
-        model: 'users',
-        key: 'id',
-      },
-      onDelete: 'SET NULL',
     },
     claimed_at: {
       type: DataTypes.DATE,
@@ -105,6 +86,7 @@ module.exports = (sequelize) => {
     },
   }, {
     tableName: 'places',
+    underscored: true,
     timestamps: true,
   });
 

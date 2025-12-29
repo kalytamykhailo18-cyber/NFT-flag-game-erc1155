@@ -1,29 +1,27 @@
-/**
- * Country model
- * Schema from Section 2.1
- */
+'use strict';
+
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const Country = sequelize.define('Country', {
+  const Region = sequelize.define('Region', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
+    country_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    code: {
-      type: DataTypes.STRING(3),
-      allowNull: false,
-      unique: true,
-    },
   }, {
-    tableName: 'countries',
+    tableName: 'regions',
+    underscored: true,
     timestamps: true,
   });
 
-  return Country;
+  return Region;
 };

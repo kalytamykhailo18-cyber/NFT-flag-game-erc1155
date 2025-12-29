@@ -1,8 +1,5 @@
-/**
- * Interest model
- * Schema from Section 2.10
- * Tracks user interest in places
- */
+'use strict';
+
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -15,31 +12,15 @@ module.exports = (sequelize) => {
     place_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: 'places',
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
     },
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: 'users',
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
     },
   }, {
     tableName: 'interests',
+    underscored: true,
     timestamps: true,
-    updatedAt: false,
-    indexes: [
-      {
-        unique: true,
-        fields: ['place_id', 'user_id'],
-      },
-    ],
   });
 
   return Interest;

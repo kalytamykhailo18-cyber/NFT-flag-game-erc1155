@@ -2,7 +2,7 @@
  * Place Controller
  * Endpoints from Section 3.2
  */
-const { Place, PlacePhotoSlice, User, Interest, UserPlaceSlice, sequelize } = require('../models');
+const { Place, PlacePhotoSlice, User, Interest, UserPlaceSlice, sequelize } = require('../../database/models');
 const blockchainService = require('../services/blockchain');
 
 /**
