@@ -110,6 +110,8 @@ const PlaceDetail = () => {
       dispatch(fetchPlaceDetail({ id, walletAddress: address }));
     } catch (err) {
       console.error('Interest toggle failed:', err);
+      const errorMessage = err.response?.data?.error?.message || 'Failed to update interest';
+      alert(errorMessage);
     } finally {
       setInterestLoading(false);
     }

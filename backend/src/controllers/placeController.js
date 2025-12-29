@@ -176,6 +176,14 @@ const addInterest = async (req, res, next) => {
     const { wallet_address } = req.body;
     const place_id = req.params.id;
 
+    // Validate wallet address
+    if (!wallet_address) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'Wallet address is required' },
+      });
+    }
+
     // Check place exists and not claimed
     const place = await Place.findByPk(place_id);
     if (!place) {
@@ -220,6 +228,14 @@ const removeInterest = async (req, res, next) => {
   try {
     const { wallet_address } = req.body;
     const place_id = req.params.id;
+
+    // Validate wallet address
+    if (!wallet_address) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'Wallet address is required' },
+      });
+    }
 
     const user = await User.findOne({ where: { wallet_address: wallet_address.toLowerCase() } });
     if (!user) {
@@ -269,6 +285,14 @@ const claimPlace = async (req, res, next) => {
   try {
     const { wallet_address } = req.body;
     const place_id = req.params.id;
+
+    // Validate wallet address
+    if (!wallet_address) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'Wallet address is required' },
+      });
+    }
 
     // Step 1: Validate inputs
     const place = await Place.findByPk(place_id, { include: [{ association: 'slices' }] });

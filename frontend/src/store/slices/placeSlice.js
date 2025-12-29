@@ -26,7 +26,7 @@ export const fetchPlace = createAsyncThunk(
   async ({ id, walletAddress }, { rejectWithValue }) => {
     try {
       const response = await api.getPlace(id, walletAddress);
-      return response.data;
+      return response; // Return full response to include has_interest
     } catch (error) {
       return rejectWithValue(error.response?.data?.error?.message || error.message);
     }
@@ -101,8 +101,12 @@ const placeSlice = createSlice({
       })
       .addCase(fetchPlace.fulfilled, (state, action) => {
         state.loading = false;
-        state.currentPlace = action.payload;
-        state.slices = action.payload.slices || [];
+        // Merge place data with has_interest flag
+        state.currentPlace = {
+          ...action.payload.data,
+          has_interest: action.payload.has_interest,
+        };
+        state.slices = action.payload.data.slices || [];
       })
       .addCase(fetchPlace.rejected, (state, action) => {
         state.loading = false;
