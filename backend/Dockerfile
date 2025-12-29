@@ -58,7 +58,9 @@ FROM node:18-alpine AS production
 # Install runtime dependencies only
 RUN apk add --no-cache \
     vips \
-    wget
+    wget \
+    postgresql-client \
+    netcat-openbsd
 
 WORKDIR /app
 
@@ -68,6 +70,12 @@ COPY --from=production-build /app/package*.json ./
 
 # Copy application code
 COPY --from=production-build /app/src ./src
+COPY --from=production-build /app/database ./database
+COPY --from=production-build /app/scripts ./scripts
+
+# Copy and set permissions for entrypoint script
+COPY --from=production-build /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Create necessary directories with proper permissions
 RUN mkdir -p uploads logs && \
@@ -88,6 +96,9 @@ EXPOSE 3000
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD wget --quiet --tries=1 --spider http://localhost:3000/health || exit 1
+
+# Use entrypoint script
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 # Start application
 CMD ["node", "src/app.js"]

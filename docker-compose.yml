@@ -51,13 +51,21 @@ services:
       ADMIN_PRIVATE_KEY: ${ADMIN_PRIVATE_KEY}
       CHAIN_ID: ${CHAIN_ID:-80002}
 
-      # IPFS
+      # IPFS / Pinata
       IPFS_API_URL: ${IPFS_API_URL:-http://ipfs:5001}
       IPFS_GATEWAY_URL: ${IPFS_GATEWAY_URL:-https://gateway.pinata.cloud/ipfs}
       PINATA_JWT: ${PINATA_JWT}
+      PINATA_API_KEY: ${PINATA_API_KEY}
+      PINATA_SECRET_KEY: ${PINATA_SECRET_KEY}
+
+      # External APIs (for scripts)
+      SERP_API_KEY: ${SERP_API_KEY}
 
       # Admin
       ADMIN_API_KEY: ${ADMIN_API_KEY:-your-secret-admin-key}
+
+      # Optional - for seeders
+      RUN_SEEDERS: ${RUN_SEEDERS:-false}
 
       # CORS
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
