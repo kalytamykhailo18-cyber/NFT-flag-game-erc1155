@@ -7,7 +7,7 @@ const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disa
   // Group slices by pair_number
   const slicesByPair = {};
   for (let i = 1; i <= pairCount; i++) {
-    slicesByPair[i] = { 1: null, 2: null };
+    slicesByPair[i] = { left: null, right: null };
   }
 
   slices.forEach((slice) => {
@@ -57,7 +57,7 @@ const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disa
         <div key={pairNumber} className="bg-dark-lighter border border-gray-800 rounded-lg p-2">
           <h4 className="text-white text-xs font-medium mb-1.5">Pair {pairNumber}</h4>
           <div className="grid grid-cols-2 gap-2">
-            {[1, 2].map((position) => {
+            {['left', 'right'].map((position) => {
               const slice = positions[position];
               const status = getSliceStatus(slice);
               const canPurchase = status === 'available' && !disabled;
@@ -73,7 +73,7 @@ const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disa
                       uri={slice?.slice_uri}
                       alt={`Slice ${pairNumber}-${position}`}
                       className="w-full h-full object-cover"
-                      fallbackText={`Pair ${pairNumber}-${position === 1 ? 'L' : 'R'}`}
+                      fallbackText={`Pair ${pairNumber}-${position === 'left' ? 'L' : 'R'}`}
                       hidden={slice?.hidden || false}
                     />
                   </div>

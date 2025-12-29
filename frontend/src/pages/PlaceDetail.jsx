@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPlaceDetail, selectCurrentPlace, selectPlaceLoading } from '../store/slices/placeSlice';
-import { selectUserProgress } from '../store/slices/userSlice';
+import { selectUserProgress, fetchUserProgress } from '../store/slices/userSlice';
 import SliceGrid from '../components/SliceGrid';
 import ProgressBar from '../components/ProgressBar';
 import IPFSImage from '../components/IPFSImage';
@@ -37,6 +37,9 @@ const PlaceDetail = () => {
   useEffect(() => {
     if (id) {
       dispatch(fetchPlaceDetail({ id, walletAddress: address }));
+      if (address) {
+        dispatch(fetchUserProgress(address));
+      }
     }
   }, [dispatch, id, address]);
 
@@ -67,7 +70,9 @@ const PlaceDetail = () => {
     setPurchasing(slice.id);
     try {
       await api.purchaseSlice(slice.id, address);
+      // Refresh both place details and user progress
       dispatch(fetchPlaceDetail({ id, walletAddress: address }));
+      dispatch(fetchUserProgress(address));
     } catch (err) {
       alert(err.response?.data?.error?.message || 'Purchase failed');
     } finally {
@@ -84,7 +89,9 @@ const PlaceDetail = () => {
     setClaiming(true);
     try {
       await api.claimPlace(id, address);
+      // Refresh both place details and user progress
       dispatch(fetchPlaceDetail({ id, walletAddress: address }));
+      dispatch(fetchUserProgress(address));
     } catch (err) {
       alert(err.response?.data?.error?.message || 'Claim failed');
     } finally {

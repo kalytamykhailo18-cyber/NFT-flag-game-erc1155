@@ -83,6 +83,7 @@ const getPlace = async (req, res, next) => {
 
     // Check if user has shown interest (default to false if no wallet)
     let hasInterest = false;
+    let ownsAnySlice = false;
     if (wallet_address) {
       const user = await User.findOne({ where: { wallet_address: wallet_address.toLowerCase() } });
       if (user) {
@@ -93,21 +94,25 @@ const getPlace = async (req, res, next) => {
       }
     }
 
-    // Convert place to JSON and hide images if no interest OR no wallet
+    // Convert place to JSON and check ownership
     const placeData = place.toJSON();
 
-    // Hide base_image_uri if no interest and not claimed
-    if (!hasInterest && !placeData.is_claimed) {
+    // Check if user owns any slice of this place
+    if (placeData.slices) {
+      ownsAnySlice = placeData.slices.some(slice => slice.is_owned && slice.owned_by?.toString() === wallet_address?.toLowerCase());
+    }
+
+    // Hide base_image_uri only if: no interest AND no ownership AND not claimed
+    if (!hasInterest && !ownsAnySlice && !placeData.is_claimed) {
       placeData.base_image_uri = null;
       placeData.base_image_hidden = true;
     }
 
-    // Hide slice images if no interest OR no wallet
+    // Hide slice images if user doesn't own them and has no interest
     if (placeData.slices) {
       placeData.slices = placeData.slices.map(slice => {
-        // Hide images if: no wallet provided OR (wallet provided but no interest) OR slice not owned
-        if (!slice.is_owned && !hasInterest) {
-          // Hide image for non-interested users or users without wallet
+        // Hide images if: slice not owned AND user has no interest
+        if (!slice.is_owned && !hasInterest && !ownsAnySlice) {
           slice.slice_uri = null;
           slice.image_sha256 = null;
           slice.hidden = true; // Flag to indicate image is hidden
