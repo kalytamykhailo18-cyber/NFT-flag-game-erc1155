@@ -19,14 +19,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       target: production
-      args:
-        VITE_API_URL: ${VITE_API_URL}
-        VITE_CONTRACT_ADDRESS: ${VITE_CONTRACT_ADDRESS}
-        VITE_CHAIN_ID: ${VITE_CHAIN_ID}
-        VITE_CHAIN_NAME: ${VITE_CHAIN_NAME}
-        VITE_RPC_URL: ${VITE_RPC_URL}
-        VITE_BLOCK_EXPLORER: ${VITE_BLOCK_EXPLORER}
-        VITE_IPFS_GATEWAY: ${VITE_IPFS_GATEWAY}
     restart: always
     ports:
       - "80:80"
