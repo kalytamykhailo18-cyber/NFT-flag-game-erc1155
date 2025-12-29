@@ -62,24 +62,40 @@ export const getSigner = async () => {
 /**
  * Connect wallet
  */
-export const connectWallet = async () => {
-  if (!isMetaMaskInstalled()) {
-    throw new Error('MetaMask is not installed');
-  }
+export const connectWallet = async (walletType = 'metamask') => {
+  // Currently only MetaMask is supported
+  if (walletType === 'metamask') {
+    if (!isMetaMaskInstalled()) {
+      throw new Error('MetaMask is not installed. Please install MetaMask extension.');
+    }
 
-  try {
-    // Request accounts
-    const accounts = await window.ethereum.request({
-      method: 'eth_requestAccounts',
-    });
+    try {
+      // Request accounts
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts',
+      });
 
-    // Switch to correct network
-    await switchNetwork();
+      if (!accounts || accounts.length === 0) {
+        throw new Error('No accounts found');
+      }
 
-    return accounts[0];
-  } catch (error) {
-    console.error('Wallet connection error:', error);
-    throw error;
+      // Switch to correct network
+      await switchNetwork();
+
+      return {
+        address: accounts[0],
+        walletType: 'metamask',
+      };
+    } catch (error) {
+      console.error('Wallet connection error:', error);
+      throw error;
+    }
+  } else if (walletType === 'walletconnect') {
+    throw new Error('WalletConnect is not implemented yet');
+  } else if (walletType === 'coinbase') {
+    throw new Error('Coinbase Wallet is not implemented yet');
+  } else {
+    throw new Error(`Unsupported wallet type: ${walletType}`);
   }
 };
 
@@ -222,15 +238,31 @@ export const getPlaceMetadataHash = async (tokenId) => {
 };
 
 /**
- * Get user's balance for a token
+ * Get user's MATIC balance (native currency)
  */
-export const getBalance = async (address, tokenId) => {
+export const getBalance = async (address) => {
+  if (!address) return '0';
+
+  try {
+    const provider = getProvider();
+    const balance = await provider.getBalance(address);
+    return ethers.formatEther(balance);
+  } catch (error) {
+    console.error('getBalance error:', error);
+    return '0';
+  }
+};
+
+/**
+ * Get user's NFT balance for a specific token
+ */
+export const getNFTBalance = async (address, tokenId) => {
   try {
     const contract = await getContract();
     const balance = await contract.balanceOf(address, tokenId);
     return balance.toString();
   } catch (error) {
-    console.error('getBalance error:', error);
+    console.error('getNFTBalance error:', error);
     return '0';
   }
 };
@@ -306,6 +338,7 @@ export default {
   getPlaceClaimedBy,
   getPlaceMetadataHash,
   getBalance,
+  getNFTBalance,
   getTokenUri,
   onAccountsChanged,
   onChainChanged,
