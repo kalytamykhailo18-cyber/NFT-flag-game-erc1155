@@ -3,6 +3,7 @@ import api from '../../services/api';
 
 const initialState = {
   isAuthenticated: false,
+  apiKey: null,
   countries: [],
   regions: [],
   municipalities: [],
@@ -216,6 +217,7 @@ const adminSlice = createSlice({
 export const { logout, clearMessage, clearNftResult } = adminSlice.actions;
 
 export const selectAdminAuth = (state) => state.admin.isAuthenticated;
+export const selectAdminApiKey = (state) => state.admin.apiKey;
 export const selectAdminCountries = (state) => state.admin.countries;
 export const selectAdminRegions = (state) => state.admin.regions;
 export const selectAdminMunicipalities = (state) => state.admin.municipalities;

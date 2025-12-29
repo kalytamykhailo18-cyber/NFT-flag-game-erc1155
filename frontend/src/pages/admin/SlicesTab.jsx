@@ -3,19 +3,19 @@
  */
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAdminData, selectAdminPlaces, selectAdminLoading } from '../../store/slices/adminSlice';
+import { fetchAdminData, selectAdminPlaces, selectAdminLoading, selectAdminApiKey } from '../../store/slices/adminSlice';
+import IPFSImage from '../../components/IPFSImage';
 import api from '../../services/api';
 
 const SlicesTab = () => {
   const dispatch = useDispatch();
   const places = useSelector(selectAdminPlaces);
   const loading = useSelector(selectAdminLoading);
+  const apiKey = useSelector(selectAdminApiKey);
 
   const [selectedPlace, setSelectedPlace] = useState('');
   const [slices, setSlices] = useState([]);
   const [loadingSlices, setLoadingSlices] = useState(false);
-
-  const apiKey = useSelector(state => state.admin.apiKey);
 
   const handlePlaceChange = async (placeId) => {
     setSelectedPlace(placeId);
@@ -83,13 +83,14 @@ const SlicesTab = () => {
           {selectedPlaceData && (
             <div className="bg-dark-lighter border border-gray-800 rounded-lg p-4 mb-6">
               <div className="flex items-center gap-4">
-                {selectedPlaceData.base_image_uri && (
-                  <img
-                    src={selectedPlaceData.base_image_uri}
+                <div className="w-24 h-24 rounded overflow-hidden flex-shrink-0">
+                  <IPFSImage
+                    uri={selectedPlaceData.base_image_uri}
                     alt={selectedPlaceData.name}
-                    className="w-24 h-24 object-cover rounded"
+                    className="w-full h-full object-cover"
+                    fallbackText="-"
                   />
-                )}
+                </div>
                 <div>
                   <h3 className="text-white font-semibold text-lg">{selectedPlaceData.name}</h3>
                   <p className="text-gray-200 text-sm">
@@ -119,17 +120,12 @@ const SliceCard = ({ slice }) => {
   return (
     <div className="bg-dark-lighter border border-gray-800 rounded-lg overflow-hidden">
       <div className="aspect-square bg-dark">
-        {slice.slice_uri ? (
-          <img
-            src={slice.slice_uri}
-            alt={`Slice ${slice.pair_number}-${slice.slice_position}`}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-500">
-            No Image
-          </div>
-        )}
+        <IPFSImage
+          uri={slice.slice_uri}
+          alt={`Slice ${slice.pair_number}-${slice.slice_position}`}
+          className="w-full h-full object-cover"
+          fallbackText="No Image"
+        />
       </div>
       <div className="p-3">
         <div className="flex justify-between items-center mb-2">

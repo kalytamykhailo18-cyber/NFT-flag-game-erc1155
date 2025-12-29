@@ -3,7 +3,7 @@
  */
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAdminData, selectAdminRegions, selectAdminCountries, selectAdminLoading } from '../../store/slices/adminSlice';
+import { fetchAdminData, selectAdminRegions, selectAdminCountries, selectAdminLoading, selectAdminApiKey } from '../../store/slices/adminSlice';
 import api from '../../services/api';
 
 const RegionsTab = () => {
@@ -11,6 +11,7 @@ const RegionsTab = () => {
   const regions = useSelector(selectAdminRegions);
   const countries = useSelector(selectAdminCountries);
   const loading = useSelector(selectAdminLoading);
+  const apiKey = useSelector(selectAdminApiKey);
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -18,8 +19,6 @@ const RegionsTab = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [filterCountry, setFilterCountry] = useState('');
-
-  const apiKey = useSelector(state => state.admin.apiKey);
 
   const filteredRegions = filterCountry
     ? regions.filter(r => r.country_id === parseInt(filterCountry))

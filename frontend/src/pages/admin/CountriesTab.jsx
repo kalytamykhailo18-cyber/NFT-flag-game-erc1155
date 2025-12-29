@@ -3,21 +3,20 @@
  */
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAdminData, selectAdminCountries, selectAdminLoading } from '../../store/slices/adminSlice';
+import { fetchAdminData, selectAdminCountries, selectAdminLoading, selectAdminApiKey } from '../../store/slices/adminSlice';
 import api from '../../services/api';
 
 const CountriesTab = () => {
   const dispatch = useDispatch();
   const countries = useSelector(selectAdminCountries);
   const loading = useSelector(selectAdminLoading);
+  const apiKey = useSelector(selectAdminApiKey);
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: '', code: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
-
-  const apiKey = useSelector(state => state.admin.apiKey);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

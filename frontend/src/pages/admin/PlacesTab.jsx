@@ -4,7 +4,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAdminData, mintPlace, selectAdminPlaces, selectAdminMunicipalities, selectAdminLoading } from '../../store/slices/adminSlice';
+import { fetchAdminData, mintPlace, selectAdminPlaces, selectAdminMunicipalities, selectAdminLoading, selectAdminApiKey } from '../../store/slices/adminSlice';
+import IPFSImage from '../../components/IPFSImage';
 import api from '../../services/api';
 
 const PlacesTab = () => {
@@ -13,12 +14,11 @@ const PlacesTab = () => {
   const places = useSelector(selectAdminPlaces);
   const municipalities = useSelector(selectAdminMunicipalities);
   const loading = useSelector(selectAdminLoading);
+  const apiKey = useSelector(selectAdminApiKey);
 
   const [filter, setFilter] = useState('all');
   const [filterMunicipality, setFilterMunicipality] = useState('');
   const [mintingId, setMintingId] = useState(null);
-
-  const apiKey = useSelector(state => state.admin.apiKey);
 
   const filteredPlaces = places
     .filter((place) => {
@@ -122,17 +122,12 @@ const PlacesTab = () => {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-dark rounded overflow-hidden flex-shrink-0">
-                        {place.base_image_uri ? (
-                          <img
-                            src={place.base_image_uri}
-                            alt={place.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
-                            -
-                          </div>
-                        )}
+                        <IPFSImage
+                          uri={place.base_image_uri}
+                          alt={place.name}
+                          className="w-full h-full object-cover"
+                          fallbackText="-"
+                        />
                       </div>
                       <span className="text-white font-medium">{place.name}</span>
                     </div>
