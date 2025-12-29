@@ -34,7 +34,7 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM('active', 'completed', 'cancelled'),
+      type: DataTypes.ENUM('active', 'ended', 'cancelled', 'completed'),
       defaultValue: 'active',
     },
     winner_id: {

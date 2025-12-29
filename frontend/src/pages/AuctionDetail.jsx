@@ -55,7 +55,7 @@ const AuctionDetail = () => {
       return;
     }
 
-    if (!confirm('Are you sure you want to end this auction? This action cannot be undone.')) {
+    if (!confirm('End this auction now? If there are bids, the highest bidder will win and ownership will transfer to them.')) {
       return;
     }
 
@@ -126,7 +126,7 @@ const AuctionDetail = () => {
                 <span className="text-gray-300">Status:</span>
                 <span className={`ml-2 capitalize ${
                   auction.status === 'active' ? 'text-green-400' :
-                  auction.status === 'ended' ? 'text-blue-400' :
+                  auction.status === 'completed' ? 'text-blue-400' :
                   'text-red-400'
                 }`}>
                   {auction.status}
@@ -211,7 +211,7 @@ const AuctionDetail = () => {
               </div>
             )}
 
-            {auction.status === 'ended' && auction.winner && (
+            {auction.status === 'completed' && auction.winner && (
               <div className="mt-6 p-4 bg-green-500/10 border border-green-500/30 rounded">
                 <div className="text-green-400 text-center">
                   Winner: {config.truncateAddress(auction.winner.wallet_address)}

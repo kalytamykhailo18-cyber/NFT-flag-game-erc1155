@@ -224,7 +224,7 @@ const placeBid = async (req, res, next) => {
       const final_price = parseFloat(auction.max_price) * (1 - discount);
 
       await auction.update({
-        status: 'ended',
+        status: 'completed',
         winner_id: user.id,
         final_price,
       });
@@ -303,7 +303,10 @@ const cancelAuction = async (req, res, next) => {
 
 /**
  * Determine auction winner
- * Priority: 1. Highest bid, 2. Earliest timestamp
+ * Priority from requirements (conversation.txt lines 196-200):
+ * 1. Highest bid amount
+ * 2. User category (Premium > Plus > Standard)
+ * 3. Earliest timestamp
  */
 const determineWinner = async (auction_id) => {
   const auction = await Auction.findByPk(auction_id, {
@@ -314,21 +317,42 @@ const determineWinner = async (auction_id) => {
     return null;
   }
 
+  // Category ranking for comparison
+  const categoryRank = {
+    premium: 3,
+    plus: 2,
+    standard: 1,
+  };
+
   // Sort bids by priority
   const sortedBids = auction.bids.sort((a, b) => {
     // 1. Highest bid amount
     const amountDiff = parseFloat(b.amount) - parseFloat(a.amount);
     if (amountDiff !== 0) return amountDiff;
 
-    // 2. Earliest timestamp
+    // 2. User category (Premium > Plus > Standard)
+    const categoryDiff = categoryRank[b.user_category] - categoryRank[a.user_category];
+    if (categoryDiff !== 0) return categoryDiff;
+
+    // 3. Earliest timestamp
     return new Date(a.created_at) - new Date(b.created_at);
   });
 
   const winningBid = sortedBids[0];
 
+  // Calculate final price with category discount
+  const categoryDiscounts = {
+    standard: 0,    // 0% discount
+    plus: 0.50,     // 50% discount
+    premium: 0.75   // 75% discount
+  };
+  const discount = categoryDiscounts[winningBid.user_category] || 0;
+  const final_price = parseFloat(winningBid.amount) * (1 - discount);
+
   return {
     winner_id: winningBid.bidder_id,
     winning_bid: winningBid,
+    final_price: final_price,
   };
 };
 
@@ -371,9 +395,9 @@ const endAuction = async (req, res, next) => {
 
     if (winnerInfo) {
       await auction.update({
-        status: 'ended',
+        status: 'completed',
         winner_id: winnerInfo.winner_id,
-        final_price: winnerInfo.winning_bid.amount,
+        final_price: winnerInfo.final_price, // Use calculated final_price with discount
       });
 
       // Transfer place ownership to the winner
@@ -387,7 +411,7 @@ const endAuction = async (req, res, next) => {
     } else {
       // No bids, just end it
       await auction.update({
-        status: 'ended',
+        status: 'completed',
       });
     }
 
