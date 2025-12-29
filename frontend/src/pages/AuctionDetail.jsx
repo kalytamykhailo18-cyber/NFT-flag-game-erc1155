@@ -61,7 +61,7 @@ const AuctionDetail = () => {
 
     setEnding(true);
     try {
-      await api.endAuction(id, address);
+      const result = await api.endAuction(id, address);
       dispatch(fetchAuctionDetail(id));
       alert('Auction ended successfully!');
     } catch (err) {

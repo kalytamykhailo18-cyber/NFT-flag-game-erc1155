@@ -228,6 +228,7 @@ export default {
   getAuction,
   createAuction,
   placeBid,
+  endAuction,
   cancelAuction,
   // Rankings
   getUserRankings,
