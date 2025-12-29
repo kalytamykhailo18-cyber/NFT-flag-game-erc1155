@@ -17,6 +17,7 @@ import { fetchPlaceDetail, selectCurrentPlace, selectPlaceLoading } from '../sto
 import { selectUserProgress } from '../store/slices/userSlice';
 import SliceGrid from '../components/SliceGrid';
 import ProgressBar from '../components/ProgressBar';
+import IPFSImage from '../components/IPFSImage';
 import config from '../config';
 import api from '../services/api';
 
@@ -151,17 +152,12 @@ const PlaceDetail = () => {
         <div>
           {/* Base Image */}
           <div className="aspect-video bg-dark rounded-lg overflow-hidden mb-4">
-            {place.base_image_uri ? (
-              <img
-                src={config.ipfsToHttp(place.base_image_uri)}
-                alt={place.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-500">
-                No Image
-              </div>
-            )}
+            <IPFSImage
+              uri={place.base_image_uri}
+              alt={place.name}
+              className="w-full h-full object-cover"
+              fallbackText="No Image Available"
+            />
           </div>
 
           {/* Place Info */}

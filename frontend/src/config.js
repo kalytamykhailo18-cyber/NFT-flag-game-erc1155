@@ -15,8 +15,14 @@ const config = {
   RPC_URL: import.meta.env.VITE_RPC_URL || 'https://rpc-amoy.polygon.technology',
   BLOCK_EXPLORER: import.meta.env.VITE_BLOCK_EXPLORER || 'https://amoy.polygonscan.com',
 
-  // IPFS
+  // IPFS - Multiple gateways for fallback
   IPFS_GATEWAY: import.meta.env.VITE_IPFS_GATEWAY || 'https://gateway.pinata.cloud/ipfs',
+  IPFS_GATEWAYS: [
+    'https://ipfs.io/ipfs',
+    'https://cloudflare-ipfs.com/ipfs',
+    'https://gateway.pinata.cloud/ipfs',
+    'https://dweb.link/ipfs',
+  ],
 
   // Utility functions
   truncateAddress: (address) => {
@@ -29,12 +35,17 @@ const config = {
     return parseFloat(price).toFixed(4);
   },
 
-  ipfsToHttp: (uri) => {
+  ipfsToHttp: (uri, gatewayIndex = 0) => {
     if (!uri) return '';
     if (uri.startsWith('ipfs://')) {
-      return `${config.IPFS_GATEWAY}/${uri.replace('ipfs://', '')}`;
+      const gateway = config.IPFS_GATEWAYS[gatewayIndex] || config.IPFS_GATEWAY;
+      return `${gateway}/${uri.replace('ipfs://', '')}`;
     }
     return uri;
+  },
+
+  getNextGateway: (currentIndex) => {
+    return (currentIndex + 1) % config.IPFS_GATEWAYS.length;
   },
 };
 

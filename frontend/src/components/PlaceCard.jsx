@@ -4,6 +4,7 @@
 import { Link } from 'react-router-dom';
 import config from '../config';
 import ProgressBar from './ProgressBar';
+import IPFSImage from './IPFSImage';
 
 const PlaceCard = ({ place, userProgress = null }) => {
   const getCategoryClass = (category) => {
@@ -29,17 +30,12 @@ const PlaceCard = ({ place, userProgress = null }) => {
     >
       {/* Image */}
       <div className="aspect-video bg-dark relative">
-        {place.base_image_uri ? (
-          <img
-            src={config.ipfsToHttp(place.base_image_uri)}
-            alt={place.name}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-500">
-            No Image
-          </div>
-        )}
+        <IPFSImage
+          uri={place.base_image_uri}
+          alt={place.name}
+          className="w-full h-full object-cover"
+          fallbackText="No Image"
+        />
 
         {/* Category badge */}
         <div className="absolute top-2 right-2">

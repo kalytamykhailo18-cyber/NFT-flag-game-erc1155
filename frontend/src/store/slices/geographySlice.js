@@ -28,8 +28,15 @@ export const fetchCountryRegions = createAsyncThunk(
   'geography/fetchCountryRegions',
   async (countryId, { rejectWithValue }) => {
     try {
-      const response = await api.getCountryRegions(countryId);
-      return response.data;
+      // Fetch both country details and regions
+      const [countryResponse, regionsResponse] = await Promise.all([
+        api.getCountry(countryId),
+        api.getCountryRegions(countryId),
+      ]);
+      return {
+        country: countryResponse.data,
+        regions: regionsResponse.data,
+      };
     } catch (error) {
       return rejectWithValue(error.response?.data?.error?.message || error.message);
     }
@@ -103,7 +110,8 @@ const geographySlice = createSlice({
       })
       .addCase(fetchCountryRegions.fulfilled, (state, action) => {
         state.loading = false;
-        state.regions = action.payload;
+        state.currentCountry = action.payload.country;
+        state.regions = action.payload.regions;
       })
       .addCase(fetchCountryRegions.rejected, (state, action) => {
         state.loading = false;

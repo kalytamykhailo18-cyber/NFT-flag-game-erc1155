@@ -1,7 +1,7 @@
 /**
  * SliceGrid - Grid display of place slices organized by pairs
  */
-import config from '../config';
+import IPFSImage from './IPFSImage';
 
 const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disabled = false }) => {
   // Group slices by pair_number
@@ -69,21 +69,12 @@ const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disa
                 >
                   {/* Image */}
                   <div className="aspect-[3/2] bg-dark">
-                    {slice?.slice_uri ? (
-                      <img
-                        src={config.ipfsToHttp(slice.slice_uri)}
-                        alt={`Slice ${pairNumber}-${position}`}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = `https://via.placeholder.com/300x200/1a1a1a/666666?text=Pair+${pairNumber}-${position === 1 ? 'Left' : 'Right'}`;
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
-                        No Image
-                      </div>
-                    )}
+                    <IPFSImage
+                      uri={slice?.slice_uri}
+                      alt={`Slice ${pairNumber}-${position}`}
+                      className="w-full h-full object-cover"
+                      fallbackText={`Pair ${pairNumber}-${position === 1 ? 'L' : 'R'}`}
+                    />
                   </div>
 
                   {/* Info */}
