@@ -1,37 +1,68 @@
 /**
  * Database Seed Script
- * Seeds the database with sample data for development/testing
+ * Seeds the database with sample data matching Section 8 requirements:
+ * - 4 countries: Spain, France, Germany, Italy
+ * - 1 region per country = 4 regions
+ * - 2 municipalities per region = 8 municipalities
+ * - 8 places per municipality = 64 places (4 standard, 2 plus, 2 premium)
+ * - Each place has slices created (pair_count * 2)
  */
 require('dotenv').config();
 const { Sequelize } = require('sequelize');
 const config = require('../src/config');
 
-// Import models
-const Country = require('../src/models/Country');
-const Region = require('../src/models/Region');
-const Municipality = require('../src/models/Municipality');
-const Place = require('../src/models/Place');
-
 const sequelize = new Sequelize(config.databaseUrl, {
   logging: false,
 });
 
+// Import models after sequelize is initialized
+const Country = require('../src/models/Country')(sequelize);
+const Region = require('../src/models/Region')(sequelize);
+const Municipality = require('../src/models/Municipality')(sequelize);
+const Place = require('../src/models/Place')(sequelize);
+const PlacePhotoSlice = require('../src/models/PlacePhotoSlice')(sequelize);
+
+// Define associations
+Region.belongsTo(Country, { foreignKey: 'country_id' });
+Municipality.belongsTo(Region, { foreignKey: 'region_id' });
+Place.belongsTo(Municipality, { foreignKey: 'municipality_id' });
+PlacePhotoSlice.belongsTo(Place, { foreignKey: 'place_id' });
+
+/**
+ * Generate placeholder slice URI
+ */
+const generateSliceUri = (placeName, pairNum, slicePos) => {
+  const slug = placeName.toLowerCase().replace(/\s+/g, '_');
+  return `ipfs://placeholder/${slug}_pair${pairNum}_slice${slicePos}.jpg`;
+};
+
+/**
+ * Generate placeholder SHA256
+ */
+const generateSha256 = (placeId, pairNum, slicePos) => {
+  const hash = `${placeId}${pairNum}${slicePos}`.padStart(64, '0');
+  return `0x${hash.slice(0, 64)}`;
+};
+
 const seed = async () => {
   console.log('Starting database seed...\n');
+  console.log('Requirements:');
+  console.log('- 4 countries: Spain, France, Germany, Italy');
+  console.log('- 1 region per country = 4 regions');
+  console.log('- 2 municipalities per region = 8 municipalities');
+  console.log('- 8 places per municipality = 64 places');
+  console.log('- Each place has slices (pair_count * 2)\n');
 
   try {
-    // Test connection
     await sequelize.authenticate();
     console.log('Database connected.\n');
 
-    // Sync models
-    await sequelize.sync({ force: true }); // WARNING: This drops all tables
+    await sequelize.sync({ force: true });
     console.log('Tables created.\n');
 
-    // Seed Countries
+    // ==================== COUNTRIES (4) ====================
     console.log('Seeding countries...');
     const countries = await Country.bulkCreate([
-      { name: 'United States', code: 'US', flag_emoji: '🇺🇸' },
       { name: 'Spain', code: 'ES', flag_emoji: '🇪🇸' },
       { name: 'France', code: 'FR', flag_emoji: '🇫🇷' },
       { name: 'Germany', code: 'DE', flag_emoji: '🇩🇪' },
@@ -39,197 +70,139 @@ const seed = async () => {
     ]);
     console.log(`Created ${countries.length} countries.\n`);
 
-    // Seed Regions
+    // ==================== REGIONS (1 per country = 4) ====================
     console.log('Seeding regions...');
     const regions = await Region.bulkCreate([
-      // US Regions
-      { name: 'California', country_id: countries[0].id },
-      { name: 'New York', country_id: countries[0].id },
-      { name: 'Texas', country_id: countries[0].id },
-      // Spain Regions
-      { name: 'Madrid', country_id: countries[1].id },
-      { name: 'Catalonia', country_id: countries[1].id },
-      { name: 'Andalusia', country_id: countries[1].id },
-      // France Regions
-      { name: 'Île-de-France', country_id: countries[2].id },
-      { name: 'Provence-Alpes-Côte d\'Azur', country_id: countries[2].id },
-      // Germany Regions
-      { name: 'Bavaria', country_id: countries[3].id },
-      { name: 'Berlin', country_id: countries[3].id },
-      // Italy Regions
-      { name: 'Lazio', country_id: countries[4].id },
-      { name: 'Tuscany', country_id: countries[4].id },
+      { name: 'Madrid', country_id: countries[0].id },
+      { name: 'Île-de-France', country_id: countries[1].id },
+      { name: 'Bavaria', country_id: countries[2].id },
+      { name: 'Lazio', country_id: countries[3].id },
     ]);
     console.log(`Created ${regions.length} regions.\n`);
 
-    // Seed Municipalities
+    // ==================== MUNICIPALITIES (2 per region = 8) ====================
     console.log('Seeding municipalities...');
     const municipalities = await Municipality.bulkCreate([
-      // California
-      { name: 'Los Angeles', code: 'LA', region_id: regions[0].id },
-      { name: 'San Francisco', code: 'SF', region_id: regions[0].id },
-      // New York
-      { name: 'New York City', code: 'NYC', region_id: regions[1].id },
-      // Texas
-      { name: 'Austin', code: 'AUS', region_id: regions[2].id },
-      // Madrid
-      { name: 'Madrid City', code: 'MAD', region_id: regions[3].id },
-      // Catalonia
-      { name: 'Barcelona', code: 'BCN', region_id: regions[4].id },
-      // Andalusia
-      { name: 'Seville', code: 'SVQ', region_id: regions[5].id },
-      // Île-de-France
-      { name: 'Paris', code: 'PAR', region_id: regions[6].id },
-      // PACA
-      { name: 'Nice', code: 'NCE', region_id: regions[7].id },
-      // Bavaria
-      { name: 'Munich', code: 'MUC', region_id: regions[8].id },
-      // Berlin
-      { name: 'Berlin City', code: 'BER', region_id: regions[9].id },
-      // Lazio
-      { name: 'Rome', code: 'ROM', region_id: regions[10].id },
-      // Tuscany
-      { name: 'Florence', code: 'FLR', region_id: regions[11].id },
+      // Spain - Madrid region
+      { name: 'Madrid City', code: 'MAD', region_id: regions[0].id },
+      { name: 'Alcala de Henares', code: 'ALC', region_id: regions[0].id },
+      // France - Île-de-France region
+      { name: 'Paris', code: 'PAR', region_id: regions[1].id },
+      { name: 'Versailles', code: 'VER', region_id: regions[1].id },
+      // Germany - Bavaria region
+      { name: 'Munich', code: 'MUC', region_id: regions[2].id },
+      { name: 'Nuremberg', code: 'NUR', region_id: regions[2].id },
+      // Italy - Lazio region
+      { name: 'Rome', code: 'ROM', region_id: regions[3].id },
+      { name: 'Tivoli', code: 'TIV', region_id: regions[3].id },
     ]);
     console.log(`Created ${municipalities.length} municipalities.\n`);
 
-    // Seed Places
+    // ==================== PLACES (8 per municipality = 64) ====================
+    // Per municipality: 4 standard, 2 plus, 2 premium
+    // Naming: standard_location_1, plus_location_1, premium_location_1
     console.log('Seeding places...');
-    const places = await Place.bulkCreate([
-      // Los Angeles (municipality_id: 1)
-      {
-        name: 'Hollywood Sign',
-        municipality_id: municipalities[0].id,
-        token_id: 1001, // 1 * 1000 + 0 + 1
-        location_type: 'premiumlocation',
-        category: 'premium',
-        pair_count: 4,
-        latitude: 34.1341,
-        longitude: -118.3215,
-        is_minted: false,
-      },
-      {
-        name: 'Santa Monica Pier',
-        municipality_id: municipalities[0].id,
-        token_id: 1002, // 1 * 1000 + 1 + 1
-        location_type: 'pluslocation',
-        category: 'plus',
-        pair_count: 3,
-        latitude: 34.0094,
-        longitude: -118.4973,
-        is_minted: false,
-      },
-      // San Francisco (municipality_id: 2)
-      {
-        name: 'Golden Gate Bridge',
-        municipality_id: municipalities[1].id,
-        token_id: 2001, // 2 * 1000 + 0 + 1
-        location_type: 'premiumlocation',
-        category: 'premium',
-        pair_count: 4,
-        latitude: 37.8199,
-        longitude: -122.4783,
-        is_minted: false,
-      },
-      // NYC (municipality_id: 3)
-      {
-        name: 'Central Park',
-        municipality_id: municipalities[2].id,
-        token_id: 3000, // 3 * 1000 + 0 + 1
-        location_type: 'premiumlocation',
-        category: 'premium',
-        pair_count: 4,
-        latitude: 40.7829,
-        longitude: -73.9654,
-        is_minted: false,
-      },
-      {
-        name: 'Times Square',
-        municipality_id: municipalities[2].id,
-        token_id: 3002, // 3 * 1000 + 1 + 1
-        location_type: 'pluslocation',
-        category: 'plus',
-        pair_count: 3,
-        latitude: 40.7580,
-        longitude: -73.9855,
-        is_minted: false,
-      },
-      {
-        name: 'Brooklyn Bridge',
-        municipality_id: municipalities[2].id,
-        token_id: 3003, // 3 * 1000 + 2 + 1
-        location_type: 'standardlocation',
-        category: 'standard',
-        pair_count: 2,
-        latitude: 40.7061,
-        longitude: -73.9969,
-        is_minted: false,
-      },
-      // Madrid (municipality_id: 5)
-      {
-        name: 'Plaza Mayor',
-        municipality_id: municipalities[4].id,
-        token_id: 5001,
-        location_type: 'premiumlocation',
-        category: 'premium',
-        pair_count: 4,
-        latitude: 40.4155,
-        longitude: -3.7074,
-        is_minted: false,
-      },
-      // Barcelona (municipality_id: 6)
-      {
-        name: 'Sagrada Familia',
-        municipality_id: municipalities[5].id,
-        token_id: 6001,
-        location_type: 'premiumlocation',
-        category: 'premium',
-        pair_count: 4,
-        latitude: 41.4036,
-        longitude: 2.1744,
-        is_minted: false,
-      },
-      // Paris (municipality_id: 8)
-      {
-        name: 'Eiffel Tower',
-        municipality_id: municipalities[7].id,
-        token_id: 8001,
-        location_type: 'premiumlocation',
-        category: 'premium',
-        pair_count: 4,
-        latitude: 48.8584,
-        longitude: 2.2945,
-        is_minted: false,
-      },
-      // Rome (municipality_id: 12)
-      {
-        name: 'Colosseum',
-        municipality_id: municipalities[11].id,
-        token_id: 12001,
-        location_type: 'premiumlocation',
-        category: 'premium',
-        pair_count: 4,
-        latitude: 41.8902,
-        longitude: 12.4922,
-        is_minted: false,
-      },
-    ]);
+
+    const placeConfigs = [
+      // 4 standard (pair_count: 2)
+      { type: 'standard', category: 'standard', pair_count: 2, count: 4 },
+      // 2 plus (pair_count: 3)
+      { type: 'plus', category: 'plus', pair_count: 3, count: 2 },
+      // 2 premium (pair_count: 4)
+      { type: 'premium', category: 'premium', pair_count: 4, count: 2 },
+    ];
+
+    const allPlaces = [];
+    let placeIndex = 0;
+
+    for (const municipality of municipalities) {
+      let standardCount = 0;
+      let plusCount = 0;
+      let premiumCount = 0;
+
+      for (const config of placeConfigs) {
+        for (let i = 0; i < config.count; i++) {
+          let locationNumber;
+          if (config.type === 'standard') {
+            standardCount++;
+            locationNumber = standardCount;
+          } else if (config.type === 'plus') {
+            plusCount++;
+            locationNumber = plusCount;
+          } else {
+            premiumCount++;
+            locationNumber = premiumCount;
+          }
+
+          // Token ID formula: municipality_id * 1000 + place_index + 1
+          const tokenId = municipality.id * 1000 + placeIndex + 1;
+          placeIndex++;
+
+          allPlaces.push({
+            name: `${config.type}_location_${locationNumber}`,
+            municipality_id: municipality.id,
+            token_id: tokenId,
+            location_type: `${config.type}location`,
+            category: config.category,
+            pair_count: config.pair_count,
+            latitude: 40.0 + Math.random() * 10,
+            longitude: 2.0 + Math.random() * 10,
+            is_minted: false,
+          });
+        }
+      }
+    }
+
+    const places = await Place.bulkCreate(allPlaces);
     console.log(`Created ${places.length} places.\n`);
 
-    // Summary
+    // ==================== SLICES (pair_count * 2 per place) ====================
+    console.log('Seeding slices...');
+
+    const allSlices = [];
+
+    for (const place of places) {
+      for (let pairNum = 1; pairNum <= place.pair_count; pairNum++) {
+        for (let slicePos = 1; slicePos <= 2; slicePos++) {
+          allSlices.push({
+            place_id: place.id,
+            pair_number: pairNum,
+            slice_position: slicePos,
+            slice_uri: generateSliceUri(place.name, pairNum, slicePos),
+            image_sha256: generateSha256(place.id, pairNum, slicePos),
+            latitude: place.latitude,
+            longitude: place.longitude,
+            price: 0.005,
+            is_owned: false,
+          });
+        }
+      }
+    }
+
+    const slices = await PlacePhotoSlice.bulkCreate(allSlices);
+    console.log(`Created ${slices.length} slices.\n`);
+
+    // ==================== SUMMARY ====================
     console.log('========================================');
     console.log('SEED COMPLETE');
     console.log('========================================');
-    console.log(`Countries: ${countries.length}`);
-    console.log(`Regions: ${regions.length}`);
-    console.log(`Municipalities: ${municipalities.length}`);
-    console.log(`Places: ${places.length}`);
+    console.log(`Countries: ${countries.length} (expected: 4)`);
+    console.log(`Regions: ${regions.length} (expected: 4)`);
+    console.log(`Municipalities: ${municipalities.length} (expected: 8)`);
+    console.log(`Places: ${places.length} (expected: 64)`);
+    console.log(`Slices: ${slices.length}`);
     console.log('========================================\n');
 
-    console.log('Sample token IDs:');
-    places.forEach((place) => {
-      console.log(`- ${place.name}: Token ID ${place.token_id}`);
-    });
+    // Sample output
+    console.log('Sample places by municipality:');
+    for (const municipality of municipalities) {
+      const municipalityPlaces = places.filter(p => p.municipality_id === municipality.id);
+      console.log(`\n${municipality.name} (${municipalityPlaces.length} places):`);
+      municipalityPlaces.slice(0, 3).forEach(p => {
+        console.log(`  - ${p.name} (Token ID: ${p.token_id}, Pairs: ${p.pair_count})`);
+      });
+      console.log('  ...');
+    }
 
   } catch (error) {
     console.error('Seed failed:', error);
@@ -239,7 +212,6 @@ const seed = async () => {
   }
 };
 
-// Run if called directly
 if (require.main === module) {
   seed();
 }
