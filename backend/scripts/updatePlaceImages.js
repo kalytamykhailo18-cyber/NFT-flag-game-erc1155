@@ -27,6 +27,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 const sharp = require('sharp');
 const { sequelize, Place, PlacePhotoSlice, Municipality, Region } = require('../database/models');
+const blockchainService = require('../src/services/blockchain');
 
 // API credentials
 const PINATA_API_KEY = process.env.PINATA_API_KEY;
@@ -326,13 +327,38 @@ async function processPlace(place) {
     console.log(`    ✓ Metadata: ${metadataHash}`);
   }
 
-  // Update place in database
+  // Update place in database with image and metadata
   await Place.update(
-    { base_image_uri: baseImageUri, metadata_uri: metadataUri },
+    { base_image_uri: baseImageUri, metadata_uri: metadataUri, metadata_hash: metadataHash },
     { where: { id: place.id } }
   );
 
   console.log(`    ✓ Place database updated`);
+
+  // Mint NFT on blockchain if metadata exists and not already minted
+  if (metadataUri && metadataHash) {
+    try {
+      console.log(`    ⏳ Minting NFT for token_id ${place.id}...`);
+
+      const mintResult = await blockchainService.mintPlace(
+        place.id,        // token_id
+        metadataUri,     // ipfs://...
+        metadataHash     // IPFS hash
+      );
+
+      // Mark as minted in database
+      await Place.update(
+        { is_minted: true },
+        { where: { id: place.id } }
+      );
+
+      console.log(`    ✓ NFT Minted: tx=${mintResult.transactionHash.substring(0, 10)}...`);
+    } catch (mintError) {
+      // Don't fail the entire process - place has image/metadata, just not minted yet
+      console.log(`    ⚠ Minting failed (can retry manually): ${mintError.message}`);
+      // Continue to process slices
+    }
+  }
 
   // Generate and upload slice images
   console.log(`    Generating slices for ${place.pair_count} pairs...`);
