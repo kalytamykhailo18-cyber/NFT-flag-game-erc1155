@@ -205,15 +205,18 @@ const Auctions = () => {
             <h2 className="text-2xl font-bold text-white mb-4">Create Auction</h2>
             <form onSubmit={handleCreateAuction} className="space-y-4">
               <div>
-                <label className="block text-gray-200 text-sm mb-2">Place ID</label>
-                <input
-                  type="number"
-                  required
-                  value={formData.place_id}
-                  onChange={(e) => setFormData({ ...formData, place_id: e.target.value })}
-                  className="w-full px-3 py-2 bg-dark border border-gray-700 rounded text-white focus:border-primary outline-none"
-                  placeholder="Enter place ID"
-                />
+                <label className="block text-gray-200 text-sm mb-2">Place</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={location.state?.placeName ? `${location.state.placeName} (ID: ${formData.place_id})` : `Place ID: ${formData.place_id}`}
+                    className="flex-1 px-3 py-2 bg-dark border border-gray-700 rounded text-gray-300 cursor-not-allowed"
+                  />
+                </div>
+                <p className="text-gray-400 text-xs mt-1">
+                  You can only create auctions for places you own
+                </p>
               </div>
               <div>
                 <label className="block text-gray-200 text-sm mb-2">Minimum Price (MATIC)</label>

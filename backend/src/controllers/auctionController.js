@@ -229,6 +229,15 @@ const placeBid = async (req, res, next) => {
         final_price,
       });
 
+      // Transfer place ownership to the winner
+      const place = await Place.findByPk(auction.place_id);
+      if (place) {
+        await place.update({
+          claimed_by: user.id,
+          claimed_at: new Date(),
+        });
+      }
+
       return res.status(201).json({
         success: true,
         data: bid,
@@ -366,6 +375,15 @@ const endAuction = async (req, res, next) => {
         winner_id: winnerInfo.winner_id,
         final_price: winnerInfo.winning_bid.amount,
       });
+
+      // Transfer place ownership to the winner
+      const place = await Place.findByPk(auction.place_id);
+      if (place) {
+        await place.update({
+          claimed_by: winnerInfo.winner_id,
+          claimed_at: new Date(),
+        });
+      }
     } else {
       // No bids, just end it
       await auction.update({
