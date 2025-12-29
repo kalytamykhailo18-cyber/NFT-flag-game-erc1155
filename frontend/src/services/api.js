@@ -87,9 +87,6 @@ export const createAuction = (data) => api.post('/auctions', data);
 export const placeBid = (auctionId, walletAddress, amount) =>
   api.post(`/auctions/${auctionId}/bid`, { wallet_address: walletAddress, amount });
 
-export const buyoutAuction = (auctionId, walletAddress) =>
-  api.post(`/auctions/${auctionId}/buyout`, { wallet_address: walletAddress });
-
 export const cancelAuction = (auctionId) => api.delete(`/auctions/${auctionId}`);
 
 // ==================== Rankings (Public) ====================
@@ -214,7 +211,6 @@ export default {
   getAuction,
   createAuction,
   placeBid,
-  buyoutAuction,
   cancelAuction,
   // Rankings
   getUserRankings,

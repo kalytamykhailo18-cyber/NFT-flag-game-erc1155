@@ -14,7 +14,6 @@ router.get('/:id', auctionController.getAuction);
 // Create and manage
 router.post('/', validateWalletAddress, auctionController.createAuction);
 router.post('/:id/bid', validateWalletAddress, auctionController.placeBid);
-router.post('/:id/buyout', validateWalletAddress, auctionController.buyout);
 router.delete('/:id', validateWalletAddress, auctionController.cancelAuction);
 
 module.exports = router;

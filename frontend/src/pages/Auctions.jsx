@@ -21,7 +21,7 @@ const Auctions = () => {
     switch (status) {
       case 'active':
         return 'bg-green-500/20 text-green-400';
-      case 'completed':
+      case 'ended':
         return 'bg-blue-500/20 text-blue-400';
       case 'cancelled':
         return 'bg-red-500/20 text-red-400';
@@ -53,7 +53,7 @@ const Auctions = () => {
 
       {/* Filter Tabs */}
       <div className="flex gap-2 mb-6">
-        {['active', 'completed', 'cancelled'].map((status) => (
+        {['active', 'ended', 'cancelled'].map((status) => (
           <button
             key={status}
             onClick={() => setFilter(status)}
@@ -116,18 +116,12 @@ const Auctions = () => {
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-500">Min Price:</span>
-                      <span className="text-white ml-2">{config.formatPrice(auction.min_price)} MATIC</span>
+                      <span className="text-gray-500">Starting Price:</span>
+                      <span className="text-white ml-2">{config.formatPrice(auction.starting_price)} MATIC</span>
                     </div>
-                    {auction.max_price && (
-                      <div>
-                        <span className="text-gray-500">Buyout:</span>
-                        <span className="text-primary ml-2">{config.formatPrice(auction.max_price)} MATIC</span>
-                      </div>
-                    )}
                     <div>
                       <span className="text-gray-500">Bids:</span>
-                      <span className="text-white ml-2">{auction.bid_count || 0}</span>
+                      <span className="text-white ml-2">{auction.bids?.length || 0}</span>
                     </div>
                     {auction.status === 'active' && (
                       <div>
@@ -141,10 +135,10 @@ const Auctions = () => {
                 {/* Current Bid */}
                 <div className="text-right">
                   <div className="text-gray-500 text-sm">
-                    {auction.status === 'completed' ? 'Final Price' : 'Current Bid'}
+                    {auction.status === 'ended' ? 'Final Price' : 'Current Bid'}
                   </div>
                   <div className="text-primary font-bold text-xl">
-                    {config.formatPrice(auction.final_price || auction.current_bid || auction.min_price)} MATIC
+                    {config.formatPrice(auction.current_price)} MATIC
                   </div>
                 </div>
               </div>

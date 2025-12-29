@@ -63,7 +63,7 @@ const Municipalities = () => {
                   <h2 className="text-white font-semibold text-lg">{municipality.name}</h2>
                   {municipality.latitude && municipality.longitude && (
                     <p className="text-gray-500 text-sm">
-                      {municipality.latitude.toFixed(4)}, {municipality.longitude.toFixed(4)}
+                      {parseFloat(municipality.latitude).toFixed(4)}, {parseFloat(municipality.longitude).toFixed(4)}
                     </p>
                   )}
                 </div>

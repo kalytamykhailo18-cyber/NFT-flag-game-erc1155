@@ -43,7 +43,7 @@ const GeneratePlaceTab = () => {
   const handleLocationTypeChange = (value) => {
     const categoryMap = {
       'standardlocation': 'standard',
-      'pluslocation': 'plus',
+      'pluslocation': 'special',
       'premiumlocation': 'premium',
     };
     setFormData({

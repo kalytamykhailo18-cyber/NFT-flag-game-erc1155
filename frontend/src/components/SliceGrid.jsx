@@ -52,11 +52,11 @@ const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disa
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {Object.entries(slicesByPair).map(([pairNumber, positions]) => (
-        <div key={pairNumber} className="bg-dark-lighter border border-gray-800 rounded-lg p-4">
-          <h4 className="text-white font-medium mb-3">Pair {pairNumber}</h4>
-          <div className="grid grid-cols-2 gap-4">
+        <div key={pairNumber} className="bg-dark-lighter border border-gray-800 rounded-lg p-2">
+          <h4 className="text-white text-xs font-medium mb-1.5">Pair {pairNumber}</h4>
+          <div className="grid grid-cols-2 gap-2">
             {[1, 2].map((position) => {
               const slice = positions[position];
               const status = getSliceStatus(slice);
@@ -68,7 +68,7 @@ const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disa
                   className={`border-2 rounded-lg overflow-hidden transition-colors ${getStatusStyles(status)}`}
                 >
                   {/* Image */}
-                  <div className="aspect-square bg-dark">
+                  <div className="aspect-[3/2] bg-dark">
                     {slice?.slice_uri ? (
                       <img
                         src={config.ipfsToHttp(slice.slice_uri)}
@@ -76,40 +76,31 @@ const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disa
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-600">
+                      <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
                         No Image
                       </div>
                     )}
                   </div>
 
                   {/* Info */}
-                  <div className="p-3">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-gray-400 text-sm">Position {position}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded ${
+                  <div className="px-1.5 py-1">
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs px-1 py-0.5 rounded ${
                         status === 'available' ? 'bg-green-500/20 text-green-400' :
                         status === 'owned_by_user' ? 'bg-blue-500/20 text-blue-400' :
                         'bg-gray-500/20 text-gray-400'
                       }`}>
                         {getStatusLabel(status)}
                       </span>
+                      {canPurchase && onPurchase && (
+                        <button
+                          onClick={() => onPurchase(slice)}
+                          className="px-1.5 py-0.5 text-xs bg-primary text-white rounded hover:bg-primary/80 transition-colors"
+                        >
+                          Buy
+                        </button>
+                      )}
                     </div>
-
-                    {slice && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-white font-medium">
-                          {config.formatPrice(slice.price)} MATIC
-                        </span>
-                        {canPurchase && onPurchase && (
-                          <button
-                            onClick={() => onPurchase(slice)}
-                            className="px-3 py-1 text-sm bg-primary text-white rounded hover:bg-primary/80 transition-colors"
-                          >
-                            Buy
-                          </button>
-                        )}
-                      </div>
-                    )}
                   </div>
                 </div>
               );

@@ -97,7 +97,7 @@ const UserRankings = ({ rankings }) => {
     switch (category) {
       case 'premium':
         return 'bg-yellow-500/20 text-yellow-400';
-      case 'plus':
+      case 'special':
         return 'bg-blue-500/20 text-blue-400';
       default:
         return 'bg-gray-500/20 text-gray-400';
@@ -209,7 +209,7 @@ const PlaceRankings = ({ rankings }) => {
               <td className="px-4 py-4">
                 <span className={`px-2 py-1 text-xs rounded capitalize ${
                   place.category === 'premium' ? 'bg-yellow-500/20 text-yellow-400' :
-                  place.category === 'plus' ? 'bg-blue-500/20 text-blue-400' :
+                  place.category === 'special' ? 'bg-blue-500/20 text-blue-400' :
                   'bg-gray-500/20 text-gray-400'
                 }`}>
                   {place.category}

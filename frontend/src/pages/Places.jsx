@@ -49,7 +49,7 @@ const Places = () => {
         >
           <option value="">All Categories</option>
           <option value="standard">Standard</option>
-          <option value="plus">Plus</option>
+          <option value="special">Special</option>
           <option value="premium">Premium</option>
         </select>
 

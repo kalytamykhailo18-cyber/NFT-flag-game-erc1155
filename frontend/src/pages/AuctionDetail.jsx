@@ -17,7 +17,6 @@ const AuctionDetail = () => {
 
   const [bidAmount, setBidAmount] = useState('');
   const [bidding, setBidding] = useState(false);
-  const [buying, setBuying] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -48,25 +47,6 @@ const AuctionDetail = () => {
     }
   };
 
-  const handleBuyout = async () => {
-    if (!isConnected || !address) {
-      alert('Please connect your wallet first');
-      return;
-    }
-
-    if (!confirm(`Buy out for ${auction.max_price} MATIC?`)) return;
-
-    setBuying(true);
-    try {
-      await api.buyoutAuction(id, address);
-      dispatch(fetchAuctionDetail(id));
-    } catch (err) {
-      alert(err.response?.data?.error?.message || 'Buyout failed');
-    } finally {
-      setBuying(false);
-    }
-  };
-
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleString();
   };
@@ -82,7 +62,7 @@ const AuctionDetail = () => {
     );
   }
 
-  const currentBid = auction.bids?.[0]?.amount || auction.min_price;
+  const currentBid = auction.current_price;
   const isActive = auction.status === 'active';
 
   return (
@@ -124,7 +104,7 @@ const AuctionDetail = () => {
                 <span className="text-gray-500">Status:</span>
                 <span className={`ml-2 capitalize ${
                   auction.status === 'active' ? 'text-green-400' :
-                  auction.status === 'completed' ? 'text-blue-400' :
+                  auction.status === 'ended' ? 'text-blue-400' :
                   'text-red-400'
                 }`}>
                   {auction.status}
@@ -133,7 +113,7 @@ const AuctionDetail = () => {
               <div>
                 <span className="text-gray-500">Created by:</span>
                 <span className="text-white ml-2">
-                  {config.truncateAddress(auction.creator?.wallet_address)}
+                  {config.truncateAddress(auction.seller?.wallet_address)}
                 </span>
               </div>
               <div>
@@ -154,14 +134,13 @@ const AuctionDetail = () => {
           <div className="bg-dark-lighter border border-gray-800 rounded-lg p-6 mb-6">
             <div className="text-center">
               <div className="text-gray-400 mb-2">
-                {auction.status === 'completed' ? 'Final Price' : 'Current Bid'}
+                {auction.status === 'ended' ? 'Final Price' : 'Current Bid'}
               </div>
               <div className="text-4xl font-bold text-primary">
-                {config.formatPrice(auction.final_price || currentBid)} MATIC
+                {config.formatPrice(currentBid)} MATIC
               </div>
               <div className="text-gray-500 mt-2">
-                Min: {config.formatPrice(auction.min_price)} MATIC
-                {auction.max_price && ` | Buyout: ${config.formatPrice(auction.max_price)} MATIC`}
+                Starting: {config.formatPrice(auction.starting_price)} MATIC | Min Increment: {config.formatPrice(auction.min_increment)} MATIC
               </div>
             </div>
 
@@ -175,7 +154,7 @@ const AuctionDetail = () => {
                     step="0.001"
                     value={bidAmount}
                     onChange={(e) => setBidAmount(e.target.value)}
-                    placeholder={`Min: ${parseFloat(currentBid) + 0.001}`}
+                    placeholder={`Min: ${parseFloat(currentBid) + parseFloat(auction.min_increment || 0.001)}`}
                     className="w-full px-4 py-3 bg-dark border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-primary"
                   />
                 </div>
@@ -187,20 +166,10 @@ const AuctionDetail = () => {
                 >
                   {bidding ? 'Placing Bid...' : 'Place Bid'}
                 </button>
-
-                {auction.max_price && (
-                  <button
-                    onClick={handleBuyout}
-                    disabled={buying || !isConnected}
-                    className="w-full py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors disabled:opacity-50"
-                  >
-                    {buying ? 'Processing...' : `Buyout for ${config.formatPrice(auction.max_price)} MATIC`}
-                  </button>
-                )}
               </div>
             )}
 
-            {auction.status === 'completed' && auction.winner && (
+            {auction.status === 'ended' && auction.winner && (
               <div className="mt-6 p-4 bg-green-500/10 border border-green-500/30 rounded">
                 <div className="text-green-400 text-center">
                   Winner: {config.truncateAddress(auction.winner.wallet_address)}
@@ -228,8 +197,7 @@ const AuctionDetail = () => {
                         {config.formatPrice(bid.amount)} MATIC
                       </div>
                       <div className="text-gray-500 text-sm">
-                        {config.truncateAddress(bid.user?.wallet_address)}
-                        <span className="ml-2 capitalize">({bid.user_category})</span>
+                        {config.truncateAddress(bid.bidder?.wallet_address)}
                       </div>
                     </div>
                     <div className="text-gray-500 text-sm">

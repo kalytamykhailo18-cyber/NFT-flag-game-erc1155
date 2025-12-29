@@ -43,7 +43,7 @@ const PlaceDetail = () => {
     switch (category) {
       case 'premium':
         return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'plus':
+      case 'special':
         return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       default:
         return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
@@ -191,10 +191,6 @@ const PlaceDetail = () => {
                 <span className="text-gray-500">Price:</span>
                 <span className="text-primary ml-2">{config.formatPrice(place.price)} MATIC</span>
               </div>
-              <div>
-                <span className="text-gray-500">Pairs:</span>
-                <span className="text-white ml-2">{place.pair_count}</span>
-              </div>
             </div>
 
             {/* Interest */}
@@ -225,13 +221,13 @@ const PlaceDetail = () => {
               </div>
             )}
           </div>
-        </div>
 
-        {/* Right: Slices and Progress */}
-        <div>
           {/* Progress Section */}
-          <div className="bg-dark-lighter border border-gray-800 rounded-lg p-6 mb-6">
-            <h2 className="text-lg font-semibold text-white mb-4">Your Progress</h2>
+          <div className="bg-dark-lighter border border-gray-800 rounded-lg p-6 mt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-white">Your Progress</h2>
+              <span className="text-gray-400 text-sm">{place.pair_count} pairs total</span>
+            </div>
             <ProgressBar
               current={progress.completed_pairs}
               total={progress.pair_count}
@@ -260,8 +256,10 @@ const PlaceDetail = () => {
                 : 'Complete all pairs to claim'}
             </button>
           </div>
+        </div>
 
-          {/* Slices Grid */}
+        {/* Right: Slices Grid */}
+        <div>
           <SliceGrid
             slices={place.slices || []}
             pairCount={place.pair_count}

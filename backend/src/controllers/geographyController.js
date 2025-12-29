@@ -155,9 +155,9 @@ const getMunicipalityPlaces = async (req, res, next) => {
 const getUserRankings = async (req, res, next) => {
   try {
     const users = await User.findAll({
-      order: [['total_places_claimed', 'DESC'], ['reputation_score', 'DESC']],
+      order: [['total_places_claimed', 'DESC'], ['total_slices_owned', 'DESC']],
       limit: 100,
-      attributes: ['id', 'wallet_address', 'username', 'category', 'total_places_claimed', 'total_slices_owned', 'reputation_score'],
+      attributes: ['id', 'wallet_address', 'username', 'total_places_claimed', 'total_slices_owned'],
     });
     res.json({ success: true, data: users });
   } catch (error) {
