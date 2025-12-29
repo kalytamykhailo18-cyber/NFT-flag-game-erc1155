@@ -141,7 +141,7 @@ const Profile = () => {
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => setActiveTab('slices')}
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+          className={`px-6 py-3 rounded-sm font-medium transition-colors ${
             activeTab === 'slices'
               ? 'bg-primary text-white'
               : 'bg-dark-lighter text-gray-200 hover:text-white'
@@ -151,7 +151,7 @@ const Profile = () => {
         </button>
         <button
           onClick={() => setActiveTab('places')}
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+          className={`px-6 py-3 rounded-sm font-medium transition-colors ${
             activeTab === 'places'
               ? 'bg-primary text-white'
               : 'bg-dark-lighter text-gray-200 hover:text-white'
@@ -161,7 +161,7 @@ const Profile = () => {
         </button>
         <button
           onClick={() => setActiveTab('won-auctions')}
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+          className={`px-6 py-3 rounded-sm font-medium transition-colors ${
             activeTab === 'won-auctions'
               ? 'bg-primary text-white'
               : 'bg-dark-lighter text-gray-200 hover:text-white'
@@ -220,7 +220,7 @@ const Profile = () => {
                   </div>
                   <Link
                     to={`/auctions/${auction.id}`}
-                    className="block w-full mt-4 px-4 py-2 bg-primary text-white text-center rounded-lg hover:bg-primary/80 transition-colors"
+                    className="block w-full mt-4 px-4 py-2 bg-primary text-white text-center rounded-sm hover:bg-primary/80 transition-colors"
                   >
                     View Details
                   </Link>
@@ -255,7 +255,7 @@ const Profile = () => {
               <Link
                 key={userSlice.id}
                 to={`/places/${userSlice.place_id}`}
-                className="bg-dark-lighter border border-gray-800 rounded-lg overflow-hidden hover:border-gray-700 transition-colors"
+                className="bg-dark-lighter border border-gray-800 rounded-sm overflow-hidden hover:border-gray-700 transition-colors"
               >
                 <div className="aspect-square bg-dark">
                   <IPFSImage
@@ -315,7 +315,7 @@ const Profile = () => {
                     <Link
                       to="/auctions"
                       state={{ placeId: place.id, placeName: place.name }}
-                      className="block w-full mt-4 px-4 py-2 bg-primary text-white text-center rounded-lg hover:bg-primary/80 transition-colors"
+                      className="block w-full mt-4 px-4 py-2 bg-primary text-white text-center rounded-sm hover:bg-primary/80 transition-colors"
                     >
                       Create Auction
                     </Link>

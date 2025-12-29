@@ -179,7 +179,7 @@ const AuctionDetail = () => {
                     <button
                       onClick={handleEndAuction}
                       disabled={ending}
-                      className="w-full py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+                      className="w-full py-3 bg-red-600 text-white rounded-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
                     >
                       {ending ? 'Ending Auction...' : 'End Auction'}
                     </button>
@@ -202,7 +202,7 @@ const AuctionDetail = () => {
                     <button
                       onClick={handleBid}
                       disabled={bidding || !isConnected}
-                      className="w-full py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/80 transition-colors disabled:opacity-50"
+                      className="w-full py-3 bg-primary text-white rounded-sm font-medium hover:bg-primary/80 transition-colors disabled:opacity-50"
                     >
                       {bidding ? 'Placing Bid...' : 'Place Bid'}
                     </button>

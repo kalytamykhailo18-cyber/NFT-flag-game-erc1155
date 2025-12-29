@@ -262,7 +262,7 @@ const PlaceDetail = () => {
             <button
               onClick={handleClaim}
               disabled={!canClaim || claiming}
-              className={`w-full mt-4 py-3 rounded-lg font-medium transition-colors ${
+              className={`w-full mt-4 py-3 rounded-sm font-medium transition-colors ${
                 canClaim
                   ? 'bg-green-500 text-white hover:bg-green-600'
                   : 'bg-gray-700 text-gray-200 cursor-not-allowed'
@@ -282,7 +282,7 @@ const PlaceDetail = () => {
               <Link
                 to="/auctions"
                 state={{ placeId: place.id, placeName: place.name }}
-                className="block w-full mt-3 py-3 rounded-lg font-medium text-center bg-primary text-white hover:bg-primary/80 transition-colors"
+                className="block w-full mt-3 py-3 rounded-sm font-medium text-center bg-primary text-white hover:bg-primary/80 transition-colors"
               >
                 Create Auction
               </Link>

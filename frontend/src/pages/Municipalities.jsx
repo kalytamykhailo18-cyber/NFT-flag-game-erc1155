@@ -56,7 +56,7 @@ const Municipalities = () => {
             <Link
               key={municipality.id}
               to={`/municipalities/${municipality.id}/places`}
-              className="bg-dark-lighter border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors"
+              className="bg-dark-lighter border border-gray-800 rounded-sm p-6 hover:border-gray-700 transition-colors"
             >
               <div className="flex justify-between items-center">
                 <div>

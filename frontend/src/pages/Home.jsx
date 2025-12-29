@@ -68,7 +68,7 @@ const Home = () => {
               <Link
                 key={country.id}
                 to={`/countries/${country.id}/regions`}
-                className="bg-dark-lighter border border-gray-800 rounded-lg p-4 hover:border-gray-700 transition-colors"
+                className="bg-dark-lighter border border-gray-800 rounded-sm p-4 hover:border-gray-700 transition-colors"
               >
                 <div className="text-white font-medium">{country.name}</div>
                 <div className="text-gray-200 text-sm">{country.code}</div>

@@ -42,7 +42,7 @@ const Rankings = () => {
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => setActiveTab('users')}
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+          className={`px-6 py-3 rounded-sm font-medium transition-colors ${
             activeTab === 'users'
               ? 'bg-primary text-white'
               : 'bg-dark-lighter text-gray-200 hover:text-white'
@@ -52,7 +52,7 @@ const Rankings = () => {
         </button>
         <button
           onClick={() => setActiveTab('places')}
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+          className={`px-6 py-3 rounded-sm font-medium transition-colors ${
             activeTab === 'places'
               ? 'bg-primary text-white'
               : 'bg-dark-lighter text-gray-200 hover:text-white'

@@ -95,7 +95,7 @@ const WalletModal = ({ isOpen, onClose }) => {
                   key={wallet.id}
                   onClick={() => handleConnect(wallet)}
                   disabled={isConnecting}
-                  className={`w-full p-4 rounded-lg border-2 transition-all ${
+                  className={`w-full p-4 rounded-sm border-2 transition-all ${
                     wallet.installed
                       ? 'bg-gray-700 border-primary/50 hover:border-primary hover:bg-gray-600 hover:scale-[1.02]'
                       : 'bg-gray-700/30 border-gray-600 hover:border-gray-500'

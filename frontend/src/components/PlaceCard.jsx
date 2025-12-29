@@ -26,7 +26,7 @@ const PlaceCard = ({ place, userProgress = null }) => {
   return (
     <Link
       to={`/places/${place.id}`}
-      className="block bg-dark-lighter border border-gray-800 rounded-lg overflow-hidden hover:border-gray-700 transition-colors"
+      className="block bg-dark-lighter border border-gray-800 rounded-sm overflow-hidden hover:border-gray-700 transition-colors"
     >
       {/* Image */}
       <div className="aspect-video bg-dark relative">

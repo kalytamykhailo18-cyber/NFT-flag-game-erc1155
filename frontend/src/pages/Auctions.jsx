@@ -107,7 +107,7 @@ const Auctions = () => {
           <button
             key={status}
             onClick={() => setFilter(status)}
-            className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${
+            className={`px-4 py-2 rounded-sm font-medium capitalize transition-colors ${
               filter === status
                 ? 'bg-primary text-white'
                 : 'bg-dark-lighter text-gray-200 hover:text-white'
@@ -135,7 +135,7 @@ const Auctions = () => {
             <Link
               key={auction.id}
               to={`/auctions/${auction.id}`}
-              className="block bg-dark-lighter border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors"
+              className="block bg-dark-lighter border border-gray-800 rounded-sm p-6 hover:border-gray-700 transition-colors"
             >
               <div className="flex items-center gap-6">
                 {/* Place Image */}
@@ -261,14 +261,14 @@ const Auctions = () => {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                  className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-sm hover:bg-gray-600 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createLoading}
-                  className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-primary text-white rounded-sm hover:bg-primary/80 transition-colors disabled:opacity-50"
                 >
                   {createLoading ? 'Creating...' : 'Create Auction'}
                 </button>
