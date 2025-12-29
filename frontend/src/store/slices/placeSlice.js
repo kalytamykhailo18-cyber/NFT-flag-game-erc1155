@@ -11,9 +11,9 @@ const initialState = {
 
 export const fetchPlaces = createAsyncThunk(
   'place/fetchPlaces',
-  async (params = {}, { rejectWithValue }) => {
+  async ({ params = {}, walletAddress = null } = {}, { rejectWithValue }) => {
     try {
-      const response = await api.getPlaces(params);
+      const response = await api.getPlaces(params, walletAddress);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error?.message || error.message);
@@ -23,9 +23,9 @@ export const fetchPlaces = createAsyncThunk(
 
 export const fetchPlace = createAsyncThunk(
   'place/fetchPlace',
-  async (id, { rejectWithValue }) => {
+  async ({ id, walletAddress }, { rejectWithValue }) => {
     try {
-      const response = await api.getPlace(id);
+      const response = await api.getPlace(id, walletAddress);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error?.message || error.message);

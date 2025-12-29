@@ -16,6 +16,7 @@ const Places = () => {
   const places = useSelector(selectPlaces);
   const municipality = useSelector(selectCurrentMunicipality);
   const loading = useSelector(selectPlaceLoading);
+  const { address } = useSelector((state) => state.wallet);
   const [searchParams, setSearchParams] = useSearchParams();
   const [municipalityData, setMunicipalityData] = useState(null);
 
@@ -47,8 +48,8 @@ const Places = () => {
       params.municipality_id = municipalityId;
     }
 
-    dispatch(fetchPlaces(params));
-  }, [dispatch, filters, municipalityId]);
+    dispatch(fetchPlaces({ params, walletAddress: address }));
+  }, [dispatch, filters, municipalityId, address]);
 
   const handleFilterChange = (key, value) => {
     const newFilters = { ...filters, [key]: value };

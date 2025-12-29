@@ -14,11 +14,12 @@ const Home = () => {
   const places = useSelector(selectPlaces);
   const loadingGeo = useSelector(selectGeographyLoading);
   const loadingPlaces = useSelector(selectPlaceLoading);
+  const { address } = useSelector((state) => state.wallet);
 
   useEffect(() => {
     dispatch(fetchCountries());
-    dispatch(fetchPlaces({ limit: 6 }));
-  }, [dispatch]);
+    dispatch(fetchPlaces({ params: { limit: 6 }, walletAddress: address }));
+  }, [dispatch, address]);
 
   return (
     <div className="container mx-auto px-4 py-8">

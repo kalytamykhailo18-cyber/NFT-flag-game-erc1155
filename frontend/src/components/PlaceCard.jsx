@@ -35,6 +35,7 @@ const PlaceCard = ({ place, userProgress = null }) => {
           alt={place.name}
           className="w-full h-full object-cover"
           fallbackText="No Image"
+          hidden={place.base_image_hidden || false}
         />
 
         {/* Category badge */}

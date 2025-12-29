@@ -74,6 +74,7 @@ const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disa
                       alt={`Slice ${pairNumber}-${position}`}
                       className="w-full h-full object-cover"
                       fallbackText={`Pair ${pairNumber}-${position === 1 ? 'L' : 'R'}`}
+                      hidden={slice?.hidden || false}
                     />
                   </div>
 

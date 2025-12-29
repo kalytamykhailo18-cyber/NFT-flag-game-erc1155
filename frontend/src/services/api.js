@@ -39,11 +39,23 @@ export const getMunicipalityPlaces = (municipalityId) => api.get(`/municipalitie
 
 // ==================== Places (Public) ====================
 
-export const getPlaces = (params = {}) => api.get('/places', { params });
+export const getPlaces = (params = {}, walletAddress = null) => {
+  const queryParams = { ...params };
+  if (walletAddress) {
+    queryParams.wallet_address = walletAddress;
+  }
+  return api.get('/places', { params: queryParams });
+};
 
-export const getPlace = (id) => api.get(`/places/${id}`);
+export const getPlace = (id, walletAddress = null) => {
+  const params = walletAddress ? { wallet_address: walletAddress } : {};
+  return api.get(`/places/${id}`, { params });
+};
 
-export const getPlaceSlices = (placeId) => api.get(`/places/${placeId}/slices`);
+export const getPlaceSlices = (placeId, walletAddress = null) => {
+  const params = walletAddress ? { wallet_address: walletAddress } : {};
+  return api.get(`/places/${placeId}/slices`, { params });
+};
 
 export const addInterest = (placeId, walletAddress) =>
   api.post(`/places/${placeId}/interest`, { wallet_address: walletAddress });

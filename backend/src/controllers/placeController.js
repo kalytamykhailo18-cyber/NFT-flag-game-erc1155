@@ -7,9 +7,11 @@ const blockchainService = require('../services/blockchain');
 
 /**
  * Get all places with optional filters
+ * Hides base_image_uri unless user has shown interest
  */
 const getPlaces = async (req, res, next) => {
   try {
+    const { wallet_address } = req.query; // Optional - if provided, check interest
     const where = {};
     if (req.query.category) where.category = req.query.category;
     if (req.query.municipality_id) where.municipality_id = req.query.municipality_id;
@@ -20,11 +22,36 @@ const getPlaces = async (req, res, next) => {
       include: [
         { association: 'slices', attributes: ['id', 'pair_number', 'slice_position', 'is_owned', 'price'] },
         { association: 'municipality' },
-        { association: 'interests', attributes: ['id'] },
+        { association: 'interests', attributes: ['id', 'user_id'] },
       ],
     });
 
-    res.json({ success: true, data: places });
+    // Get user if wallet provided
+    let user = null;
+    if (wallet_address) {
+      user = await User.findOne({ where: { wallet_address: wallet_address.toLowerCase() } });
+    }
+
+    // Hide base images if user hasn't shown interest
+    const placesData = places.map(place => {
+      const placeData = place.toJSON();
+
+      // Check if user has shown interest in this place
+      let hasInterest = false;
+      if (user && placeData.interests) {
+        hasInterest = placeData.interests.some(interest => interest.user_id === user.id);
+      }
+
+      // Hide base_image_uri if no interest and place is not claimed
+      if (!hasInterest && !placeData.is_claimed) {
+        placeData.base_image_uri = null;
+        placeData.base_image_hidden = true;
+      }
+
+      return placeData;
+    });
+
+    res.json({ success: true, data: placesData });
   } catch (error) {
     next(error);
   }
@@ -54,7 +81,7 @@ const getPlace = async (req, res, next) => {
       });
     }
 
-    // Check if user has shown interest
+    // Check if user has shown interest (default to false if no wallet)
     let hasInterest = false;
     if (wallet_address) {
       const user = await User.findOne({ where: { wallet_address: wallet_address.toLowerCase() } });
@@ -66,12 +93,21 @@ const getPlace = async (req, res, next) => {
       }
     }
 
-    // Convert place to JSON and hide slice images if no interest
+    // Convert place to JSON and hide images if no interest OR no wallet
     const placeData = place.toJSON();
+
+    // Hide base_image_uri if no interest and not claimed
+    if (!hasInterest && !placeData.is_claimed) {
+      placeData.base_image_uri = null;
+      placeData.base_image_hidden = true;
+    }
+
+    // Hide slice images if no interest OR no wallet
     if (placeData.slices) {
       placeData.slices = placeData.slices.map(slice => {
-        if (!hasInterest && !slice.is_owned) {
-          // Hide image for non-interested users
+        // Hide images if: no wallet provided OR (wallet provided but no interest) OR slice not owned
+        if (!slice.is_owned && !hasInterest) {
+          // Hide image for non-interested users or users without wallet
           slice.slice_uri = null;
           slice.image_sha256 = null;
           slice.hidden = true; // Flag to indicate image is hidden
@@ -101,7 +137,7 @@ const getPlaceSlices = async (req, res, next) => {
       order: [['pair_number', 'ASC'], ['slice_position', 'ASC']],
     });
 
-    // Check if user has shown interest
+    // Check if user has shown interest (default to false if no wallet)
     let hasInterest = false;
     if (wallet_address) {
       const user = await User.findOne({ where: { wallet_address: wallet_address.toLowerCase() } });
@@ -113,11 +149,12 @@ const getPlaceSlices = async (req, res, next) => {
       }
     }
 
-    // Hide slice images if no interest
+    // Hide slice images if no interest OR no wallet
     const filteredSlices = slices.map(slice => {
       const sliceData = slice.toJSON();
-      if (!hasInterest && !sliceData.is_owned) {
-        // Hide image for non-interested users
+      // Hide images if: no wallet provided OR (wallet provided but no interest) OR slice not owned
+      if (!sliceData.is_owned && !hasInterest) {
+        // Hide image for non-interested users or users without wallet
         sliceData.slice_uri = null;
         sliceData.image_sha256 = null;
         sliceData.hidden = true; // Flag to indicate image is hidden

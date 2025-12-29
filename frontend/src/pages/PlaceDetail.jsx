@@ -32,13 +32,20 @@ const PlaceDetail = () => {
   const [purchasing, setPurchasing] = useState(null);
   const [claiming, setClaiming] = useState(false);
   const [interestLoading, setInterestLoading] = useState(false);
-  const [isInterested, setIsInterested] = useState(false);
+  const [hasInterest, setHasInterest] = useState(false);
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchPlaceDetail(id));
+      dispatch(fetchPlaceDetail({ id, walletAddress: address }));
     }
-  }, [dispatch, id]);
+  }, [dispatch, id, address]);
+
+  // Update hasInterest from API response
+  useEffect(() => {
+    if (place?.has_interest !== undefined) {
+      setHasInterest(place.has_interest);
+    }
+  }, [place]);
 
   const getCategoryClass = (category) => {
     switch (category) {
@@ -60,7 +67,7 @@ const PlaceDetail = () => {
     setPurchasing(slice.id);
     try {
       await api.purchaseSlice(slice.id, address);
-      dispatch(fetchPlaceDetail(id));
+      dispatch(fetchPlaceDetail({ id, walletAddress: address }));
     } catch (err) {
       alert(err.response?.data?.error?.message || 'Purchase failed');
     } finally {
@@ -77,7 +84,7 @@ const PlaceDetail = () => {
     setClaiming(true);
     try {
       await api.claimPlace(id, address);
-      dispatch(fetchPlaceDetail(id));
+      dispatch(fetchPlaceDetail({ id, walletAddress: address }));
     } catch (err) {
       alert(err.response?.data?.error?.message || 'Claim failed');
     } finally {
@@ -93,14 +100,14 @@ const PlaceDetail = () => {
 
     setInterestLoading(true);
     try {
-      if (isInterested) {
+      if (hasInterest) {
         await api.removeInterest(id, address);
-        setIsInterested(false);
+        setHasInterest(false);
       } else {
         await api.addInterest(id, address);
-        setIsInterested(true);
+        setHasInterest(true);
       }
-      dispatch(fetchPlaceDetail(id));
+      dispatch(fetchPlaceDetail({ id, walletAddress: address }));
     } catch (err) {
       console.error('Interest toggle failed:', err);
     } finally {
@@ -157,6 +164,7 @@ const PlaceDetail = () => {
               alt={place.name}
               className="w-full h-full object-cover"
               fallbackText="No Image Available"
+              hidden={place.base_image_hidden || false}
             />
           </div>
 
@@ -199,12 +207,12 @@ const PlaceDetail = () => {
                   onClick={handleToggleInterest}
                   disabled={interestLoading || !isConnected}
                   className={`px-4 py-2 rounded text-sm transition-colors ${
-                    isInterested
+                    hasInterest
                       ? 'bg-primary/20 text-primary border border-primary'
                       : 'bg-gray-700 text-white hover:bg-gray-600'
                   }`}
                 >
-                  {isInterested ? 'Interested' : 'Add Interest'}
+                  {hasInterest ? 'Interested' : 'Show Interest'}
                 </button>
               )}
             </div>
