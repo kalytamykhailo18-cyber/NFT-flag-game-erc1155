@@ -26,9 +26,42 @@ module.exports = {
         type: Sequelize.ENUM('left', 'right'),
         allowNull: false,
       },
-      image_uri: {
+      slice_uri: {
         type: Sequelize.STRING(500),
         allowNull: true,
+      },
+      image_sha256: {
+        type: Sequelize.STRING(66),
+        allowNull: true,
+      },
+      latitude: {
+        type: Sequelize.DECIMAL(10, 8),
+        allowNull: true,
+      },
+      longitude: {
+        type: Sequelize.DECIMAL(11, 8),
+        allowNull: true,
+      },
+      polygon_geojson: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      captured_at: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      sequence: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      zoom_level: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      price: {
+        type: Sequelize.DECIMAL(18, 8),
+        allowNull: false,
+        defaultValue: 0.005,
       },
       is_owned: {
         type: Sequelize.BOOLEAN,
@@ -47,11 +80,6 @@ module.exports = {
       owned_at: {
         type: Sequelize.DATE,
         allowNull: true,
-      },
-      price: {
-        type: Sequelize.DECIMAL(18, 8),
-        allowNull: false,
-        defaultValue: 0.005,
       },
       tx_hash: {
         type: Sequelize.STRING(66),

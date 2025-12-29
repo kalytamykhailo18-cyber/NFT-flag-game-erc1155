@@ -28,18 +28,13 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      starting_price: {
+      min_price: {
         type: Sequelize.DECIMAL(18, 8),
         allowNull: false,
       },
-      current_price: {
+      max_price: {
         type: Sequelize.DECIMAL(18, 8),
-        allowNull: false,
-      },
-      min_increment: {
-        type: Sequelize.DECIMAL(18, 8),
-        allowNull: false,
-        defaultValue: 0.001,
+        allowNull: true,
       },
       start_time: {
         type: Sequelize.DATE,
@@ -50,7 +45,7 @@ module.exports = {
         allowNull: false,
       },
       status: {
-        type: Sequelize.ENUM('active', 'ended', 'cancelled'),
+        type: Sequelize.ENUM('active', 'completed', 'cancelled'),
         defaultValue: 'active',
       },
       winner_id: {
@@ -62,6 +57,10 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
+      },
+      final_price: {
+        type: Sequelize.DECIMAL(18, 8),
+        allowNull: true,
       },
       tx_hash: {
         type: Sequelize.STRING(66),

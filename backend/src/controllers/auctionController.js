@@ -68,12 +68,12 @@ const getAuction = async (req, res, next) => {
  */
 const createAuction = async (req, res, next) => {
   try {
-    const { place_id, wallet_address, starting_price, min_increment, duration_hours } = req.body;
+    const { place_id, wallet_address, min_price, max_price, duration_hours } = req.body;
 
-    if (!place_id || !wallet_address || !starting_price || !duration_hours) {
+    if (!place_id || !wallet_address || !min_price || !duration_hours) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'place_id, wallet_address, starting_price, and duration_hours are required' },
+        error: { code: 'VALIDATION_ERROR', message: 'place_id, wallet_address, min_price, and duration_hours are required' },
       });
     }
 
@@ -117,9 +117,8 @@ const createAuction = async (req, res, next) => {
     const auction = await Auction.create({
       place_id,
       seller_id: user.id,
-      starting_price,
-      current_price: starting_price,
-      min_increment: min_increment || 0.001,
+      min_price,
+      max_price: max_price || null,
       start_time,
       end_time,
       status: 'active',
@@ -170,10 +169,11 @@ const placeBid = async (req, res, next) => {
       });
     }
 
-    if (parseFloat(amount) < parseFloat(auction.current_price) + parseFloat(auction.min_increment)) {
+    // Validate bid is at least min_price
+    if (parseFloat(amount) < parseFloat(auction.min_price)) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: `Bid must be at least ${parseFloat(auction.current_price) + parseFloat(auction.min_increment)}` },
+        error: { code: 'VALIDATION_ERROR', message: `Bid must be at least ${auction.min_price}` },
       });
     }
 
@@ -183,17 +183,39 @@ const placeBid = async (req, res, next) => {
       defaults: { wallet_address: wallet_address.toLowerCase() },
     });
 
-    // Create bid
+    // Create bid (capture user category at bid time for winner determination)
     const bid = await Bid.create({
       auction_id,
       bidder_id: user.id,
       amount,
+      user_category: user.category,
     });
 
-    // Update current price
-    await auction.update({
-      current_price: amount,
-    });
+    // Check for buyout (if bid >= max_price, auction ends immediately)
+    if (auction.max_price && parseFloat(amount) >= parseFloat(auction.max_price)) {
+      // Calculate final price with category discount
+      const categoryDiscounts = {
+        standard: 0,
+        plus: 0.50,
+        premium: 0.75,
+      };
+      const discount = categoryDiscounts[user.category] || 0;
+      const final_price = parseFloat(auction.max_price) * (1 - discount);
+
+      await auction.update({
+        status: 'completed',
+        winner_id: user.id,
+        final_price,
+      });
+
+      return res.status(201).json({
+        success: true,
+        data: bid,
+        auction_completed: true,
+        message: 'Buyout successful! Auction completed.',
+        final_price,
+      });
+    }
 
     res.status(201).json({ success: true, data: bid });
   } catch (error) {

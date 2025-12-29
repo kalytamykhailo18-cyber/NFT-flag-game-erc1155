@@ -62,7 +62,9 @@ const AuctionDetail = () => {
     );
   }
 
-  const currentBid = auction.current_price;
+  const highestBid = auction.bids && auction.bids.length > 0
+    ? Math.max(...auction.bids.map(b => parseFloat(b.amount)))
+    : parseFloat(auction.min_price);
   const isActive = auction.status === 'active';
 
   return (
@@ -134,13 +136,16 @@ const AuctionDetail = () => {
           <div className="bg-dark-lighter border border-gray-800 rounded-lg p-6 mb-6">
             <div className="text-center">
               <div className="text-gray-200 mb-2">
-                {auction.status === 'ended' ? 'Final Price' : 'Current Bid'}
+                {auction.status === 'completed' ? 'Final Price' : 'Highest Bid'}
               </div>
               <div className="text-4xl font-bold text-primary">
-                {config.formatPrice(currentBid)} MATIC
+                {auction.final_price ? config.formatPrice(auction.final_price) : config.formatPrice(highestBid)} MATIC
               </div>
               <div className="text-gray-300 mt-2">
-                Starting: {config.formatPrice(auction.starting_price)} MATIC | Min Increment: {config.formatPrice(auction.min_increment)} MATIC
+                Min Price: {config.formatPrice(auction.min_price)} MATIC
+                {auction.max_price && (
+                  <> | Buyout: {config.formatPrice(auction.max_price)} MATIC</>
+                )}
               </div>
             </div>
 
@@ -154,7 +159,7 @@ const AuctionDetail = () => {
                     step="0.001"
                     value={bidAmount}
                     onChange={(e) => setBidAmount(e.target.value)}
-                    placeholder={`Min: ${parseFloat(currentBid) + parseFloat(auction.min_increment || 0.001)}`}
+                    placeholder={`Min: ${auction.min_price}`}
                     className="w-full px-4 py-3 bg-dark border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-primary"
                   />
                 </div>

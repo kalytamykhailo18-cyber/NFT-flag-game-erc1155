@@ -3,26 +3,31 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const Bid = sequelize.define('Bid', {
+  const UserPlaceSlice = sequelize.define('UserPlaceSlice', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    auction_id: {
+    user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    bidder_id: {
+    place_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    amount: {
+    slice_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    purchased_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
+    purchase_price: {
       type: DataTypes.DECIMAL(18, 8),
-      allowNull: false,
-    },
-    user_category: {
-      type: DataTypes.ENUM('standard', 'plus', 'premium'),
       allowNull: false,
     },
     tx_hash: {
@@ -30,10 +35,10 @@ module.exports = (sequelize) => {
       allowNull: true,
     },
   }, {
-    tableName: 'bids',
+    tableName: 'user_place_slices',
     underscored: true,
     timestamps: true,
   });
 
-  return Bid;
+  return UserPlaceSlice;
 };

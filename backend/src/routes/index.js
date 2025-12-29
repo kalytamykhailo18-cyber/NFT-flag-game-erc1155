@@ -10,6 +10,7 @@ const placeRoutes = require('./placeRoutes');
 const sliceRoutes = require('./sliceRoutes');
 const userRoutes = require('./userRoutes');
 const auctionRoutes = require('./auctionRoutes');
+const rankingRoutes = require('./rankingRoutes');
 
 // Admin routes (protected by X-Admin-Key)
 router.use('/admin', adminRoutes);
@@ -20,5 +21,6 @@ router.use('/places', placeRoutes);
 router.use('/slices', sliceRoutes);
 router.use('/users', userRoutes);
 router.use('/auctions', auctionRoutes);
+router.use('/rankings', rankingRoutes);
 
 module.exports = router;

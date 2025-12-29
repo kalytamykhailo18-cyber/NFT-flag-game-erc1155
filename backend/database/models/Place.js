@@ -39,7 +39,7 @@ module.exports = (sequelize) => {
       allowNull: true,
     },
     category: {
-      type: DataTypes.ENUM('standard', 'special', 'premium'),
+      type: DataTypes.ENUM('standard', 'plus', 'premium'),
       defaultValue: 'standard',
     },
     price: {

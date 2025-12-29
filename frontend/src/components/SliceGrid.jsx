@@ -69,9 +69,9 @@ const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disa
                 >
                   {/* Image */}
                   <div className="aspect-[3/2] bg-dark">
-                    {slice?.image_uri ? (
+                    {slice?.slice_uri ? (
                       <img
-                        src={config.ipfsToHttp(slice.image_uri)}
+                        src={config.ipfsToHttp(slice.slice_uri)}
                         alt={`Slice ${pairNumber}-${position}`}
                         className="w-full h-full object-cover"
                       />

@@ -116,9 +116,15 @@ const Auctions = () => {
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-300">Starting Price:</span>
-                      <span className="text-white ml-2">{config.formatPrice(auction.starting_price)} MATIC</span>
+                      <span className="text-gray-300">Min Price:</span>
+                      <span className="text-white ml-2">{config.formatPrice(auction.min_price)} MATIC</span>
                     </div>
+                    {auction.max_price && (
+                      <div>
+                        <span className="text-gray-300">Buyout:</span>
+                        <span className="text-yellow-400 ml-2">{config.formatPrice(auction.max_price)} MATIC</span>
+                      </div>
+                    )}
                     <div>
                       <span className="text-gray-300">Bids:</span>
                       <span className="text-white ml-2">{auction.bids?.length || 0}</span>
@@ -132,13 +138,13 @@ const Auctions = () => {
                   </div>
                 </div>
 
-                {/* Current Bid */}
+                {/* Final/Current Price */}
                 <div className="text-right">
                   <div className="text-gray-300 text-sm">
-                    {auction.status === 'ended' ? 'Final Price' : 'Current Bid'}
+                    {auction.status === 'completed' ? 'Final Price' : 'Highest Bid'}
                   </div>
                   <div className="text-primary font-bold text-xl">
-                    {config.formatPrice(auction.current_price)} MATIC
+                    {auction.final_price ? config.formatPrice(auction.final_price) : (auction.bids && auction.bids.length > 0 ? config.formatPrice(Math.max(...auction.bids.map(b => parseFloat(b.amount)))) : config.formatPrice(auction.min_price))} MATIC
                   </div>
                 </div>
               </div>

@@ -19,6 +19,7 @@ const Municipality = require('./Municipality')(sequelize);
 const User = require('./User')(sequelize);
 const Place = require('./Place')(sequelize);
 const PlacePhotoSlice = require('./PlacePhotoSlice')(sequelize);
+const UserPlaceSlice = require('./UserPlaceSlice')(sequelize);
 const Interest = require('./Interest')(sequelize);
 const Auction = require('./Auction')(sequelize);
 const Bid = require('./Bid')(sequelize);
@@ -60,6 +61,15 @@ Auction.hasMany(Bid, { foreignKey: 'auction_id', as: 'bids' });
 Bid.belongsTo(User, { foreignKey: 'bidder_id', as: 'bidder' });
 User.hasMany(Bid, { foreignKey: 'bidder_id', as: 'bids' });
 
+UserPlaceSlice.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+User.hasMany(UserPlaceSlice, { foreignKey: 'user_id', as: 'userSlices' });
+
+UserPlaceSlice.belongsTo(Place, { foreignKey: 'place_id', as: 'place' });
+Place.hasMany(UserPlaceSlice, { foreignKey: 'place_id', as: 'userSlices' });
+
+UserPlaceSlice.belongsTo(PlacePhotoSlice, { foreignKey: 'slice_id', as: 'slice' });
+PlacePhotoSlice.hasMany(UserPlaceSlice, { foreignKey: 'slice_id', as: 'userSlices' });
+
 module.exports = {
   sequelize,
   Sequelize,
@@ -69,6 +79,7 @@ module.exports = {
   User,
   Place,
   PlacePhotoSlice,
+  UserPlaceSlice,
   Interest,
   Auction,
   Bid,

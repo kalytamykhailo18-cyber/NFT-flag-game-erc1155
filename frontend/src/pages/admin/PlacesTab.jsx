@@ -86,7 +86,7 @@ const PlacesTab = () => {
           <FilterButton active={filter === 'minted'} onClick={() => setFilter('minted')}>Minted</FilterButton>
           <FilterButton active={filter === 'unminted'} onClick={() => setFilter('unminted')}>Unminted</FilterButton>
           <FilterButton active={filter === 'standard'} onClick={() => setFilter('standard')}>Standard</FilterButton>
-          <FilterButton active={filter === 'special'} onClick={() => setFilter('special')}>Special</FilterButton>
+          <FilterButton active={filter === 'plus'} onClick={() => setFilter('plus')}>Plus</FilterButton>
           <FilterButton active={filter === 'premium'} onClick={() => setFilter('premium')}>Premium</FilterButton>
         </div>
       </div>

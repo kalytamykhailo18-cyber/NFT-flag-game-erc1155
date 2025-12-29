@@ -17,18 +17,13 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    starting_price: {
+    min_price: {
       type: DataTypes.DECIMAL(18, 8),
       allowNull: false,
     },
-    current_price: {
+    max_price: {
       type: DataTypes.DECIMAL(18, 8),
-      allowNull: false,
-    },
-    min_increment: {
-      type: DataTypes.DECIMAL(18, 8),
-      allowNull: false,
-      defaultValue: 0.001,
+      allowNull: true,
     },
     start_time: {
       type: DataTypes.DATE,
@@ -39,11 +34,15 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM('active', 'ended', 'cancelled'),
+      type: DataTypes.ENUM('active', 'completed', 'cancelled'),
       defaultValue: 'active',
     },
     winner_id: {
       type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    final_price: {
+      type: DataTypes.DECIMAL(18, 8),
       allowNull: true,
     },
     tx_hash: {

@@ -43,7 +43,7 @@ const PlaceDetail = () => {
     switch (category) {
       case 'premium':
         return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      case 'special':
+      case 'plus':
         return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       default:
         return 'bg-gray-500/20 text-gray-200 border-gray-500/30';

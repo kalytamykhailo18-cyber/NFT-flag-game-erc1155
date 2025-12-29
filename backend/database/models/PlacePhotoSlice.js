@@ -21,9 +21,42 @@ module.exports = (sequelize) => {
       type: DataTypes.ENUM('left', 'right'),
       allowNull: false,
     },
-    image_uri: {
+    slice_uri: {
       type: DataTypes.STRING(500),
       allowNull: true,
+    },
+    image_sha256: {
+      type: DataTypes.STRING(66),
+      allowNull: true,
+    },
+    latitude: {
+      type: DataTypes.DECIMAL(10, 8),
+      allowNull: true,
+    },
+    longitude: {
+      type: DataTypes.DECIMAL(11, 8),
+      allowNull: true,
+    },
+    polygon_geojson: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    captured_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    sequence: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    zoom_level: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    price: {
+      type: DataTypes.DECIMAL(18, 8),
+      allowNull: false,
+      defaultValue: 0.005,
     },
     is_owned: {
       type: DataTypes.BOOLEAN,
@@ -36,11 +69,6 @@ module.exports = (sequelize) => {
     owned_at: {
       type: DataTypes.DATE,
       allowNull: true,
-    },
-    price: {
-      type: DataTypes.DECIMAL(18, 8),
-      allowNull: false,
-      defaultValue: 0.005,
     },
     tx_hash: {
       type: DataTypes.STRING(66),

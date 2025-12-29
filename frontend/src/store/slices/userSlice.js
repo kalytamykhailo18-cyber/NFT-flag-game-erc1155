@@ -103,7 +103,11 @@ export const { clearUser, clearError } = userSlice.actions;
 export const selectUser = (state) => state.user.user;
 export const selectOwnedSlices = (state) => state.user.ownedSlices;
 export const selectClaimedPlaces = (state) => state.user.claimedPlaces;
-export const selectUserProgress = (state) => state.user.progress;
+export const selectAllUserProgress = (state) => state.user.progress;
+export const selectUserProgress = (state, placeId) => {
+  const progress = state.user.progress;
+  return progress.find((p) => p.place_id === parseInt(placeId));
+};
 export const selectUserLoading = (state) => state.user.loading;
 
 export default userSlice.reducer;

@@ -15,8 +15,13 @@ module.exports = (sequelize) => {
       unique: true,
     },
     username: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING(100),
       allowNull: true,
+    },
+    category: {
+      type: DataTypes.ENUM('standard', 'plus', 'premium'),
+      allowNull: false,
+      defaultValue: 'standard',
     },
     avatar_url: {
       type: DataTypes.STRING(255),
@@ -28,6 +33,11 @@ module.exports = (sequelize) => {
     },
     total_places_claimed: {
       type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    reputation_score: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
       defaultValue: 0,
     },
   }, {

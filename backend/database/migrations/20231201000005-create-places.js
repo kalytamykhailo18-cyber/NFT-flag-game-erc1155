@@ -44,7 +44,7 @@ module.exports = {
         allowNull: true,
       },
       category: {
-        type: Sequelize.ENUM('standard', 'special', 'premium'),
+        type: Sequelize.ENUM('standard', 'plus', 'premium'),
         defaultValue: 'standard',
       },
       price: {
