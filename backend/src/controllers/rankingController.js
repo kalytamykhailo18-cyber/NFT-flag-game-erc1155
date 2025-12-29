@@ -66,12 +66,14 @@ const getPlaceRankings = async (req, res, next) => {
         p.name,
         p.token_id,
         p.category,
+        p.base_image_uri,
+        p.municipality_id,
         p.is_claimed,
         p.claimed_by,
         COUNT(i.id) as interest_count
       FROM places p
       LEFT JOIN interests i ON p.id = i.place_id
-      GROUP BY p.id, p.name, p.token_id, p.category, p.is_claimed, p.claimed_by
+      GROUP BY p.id, p.name, p.token_id, p.category, p.base_image_uri, p.municipality_id, p.is_claimed, p.claimed_by
       ORDER BY interest_count DESC, p.is_claimed ASC, p.id ASC
       LIMIT 100
     `);
