@@ -614,15 +614,27 @@ const createPlaceFromCoordinates = async (req, res, next) => {
         metadata_hash: metadataResult.hash,
       }, { transaction });
 
+      // Step 13: Mint NFT on blockchain (automatically)
+      let mintResult = null;
+      try {
+        mintResult = await blockchainService.mintPlace(place.token_id, metadataResult.uri, metadataResult.hash);
+        await place.update({ is_minted: true }, { transaction });
+      } catch (mintError) {
+        console.error('NFT minting failed, but place was created:', mintError);
+        // Continue - admin can manually mint later if needed
+      }
+
       await transaction.commit();
 
-      // Step 13: Return result
+      // Step 14: Return result
       res.status(201).json({
         success: true,
         place: await Place.findByPk(place.id, { include: [{ association: 'slices' }] }),
         slices,
         metadata_uri: metadataResult.uri,
         token_id,
+        minted: !!mintResult,
+        mint_transaction: mintResult,
       });
     } catch (error) {
       await transaction.rollback();
