@@ -170,7 +170,7 @@ const GeneratePlaceTab = () => {
 
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-gray-400 text-sm mb-2">Latitude *</label>
+              <label className="block text-gray-200 text-sm mb-2">Latitude *</label>
               <input
                 type="number"
                 step="any"
@@ -182,7 +182,7 @@ const GeneratePlaceTab = () => {
               />
             </div>
             <div>
-              <label className="block text-gray-400 text-sm mb-2">Longitude *</label>
+              <label className="block text-gray-200 text-sm mb-2">Longitude *</label>
               <input
                 type="number"
                 step="any"
@@ -196,7 +196,7 @@ const GeneratePlaceTab = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-400 text-sm mb-2">Municipality *</label>
+            <label className="block text-gray-200 text-sm mb-2">Municipality *</label>
             <select
               value={formData.municipality_id}
               onChange={(e) => setFormData({ ...formData, municipality_id: e.target.value })}
@@ -211,7 +211,7 @@ const GeneratePlaceTab = () => {
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-400 text-sm mb-2">Custom Name (optional)</label>
+            <label className="block text-gray-200 text-sm mb-2">Custom Name (optional)</label>
             <input
               type="text"
               value={formData.custom_name}
@@ -243,7 +243,7 @@ const GeneratePlaceTab = () => {
           <h3 className="text-lg font-semibold text-white mb-4">Configure Place</h3>
 
           <div className="mb-4">
-            <label className="block text-gray-400 text-sm mb-2">Location Type *</label>
+            <label className="block text-gray-200 text-sm mb-2">Location Type *</label>
             <div className="flex gap-4">
               {['standardlocation', 'pluslocation', 'premiumlocation'].map((type) => (
                 <label key={type} className="flex items-center gap-2 cursor-pointer">
@@ -262,7 +262,7 @@ const GeneratePlaceTab = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-400 text-sm mb-2">Category (auto-set)</label>
+            <label className="block text-gray-200 text-sm mb-2">Category (auto-set)</label>
             <select
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
@@ -275,7 +275,7 @@ const GeneratePlaceTab = () => {
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-400 text-sm mb-2">Number of Pairs *</label>
+            <label className="block text-gray-200 text-sm mb-2">Number of Pairs *</label>
             <select
               value={formData.pair_count}
               onChange={(e) => setFormData({ ...formData, pair_count: parseInt(e.target.value) })}
@@ -320,7 +320,7 @@ const GeneratePlaceTab = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-600">
+                  <div className="w-full h-full flex items-center justify-center text-gray-500">
                     Pair {slice.pair_number}, Pos {slice.slice_position}
                   </div>
                 )}
@@ -331,11 +331,11 @@ const GeneratePlaceTab = () => {
           <div className="mb-6 p-4 bg-dark rounded">
             <h4 className="text-white font-semibold mb-2">Summary</h4>
             <div className="space-y-1 text-sm">
-              <p className="text-gray-400">Name: <span className="text-white">{formData.custom_name || 'Auto-generated'}</span></p>
-              <p className="text-gray-400">Location Type: <span className="text-white capitalize">{formData.location_type}</span></p>
-              <p className="text-gray-400">Category: <span className="text-white capitalize">{formData.category}</span></p>
-              <p className="text-gray-400">Pairs: <span className="text-white">{formData.pair_count}</span></p>
-              <p className="text-gray-400">Total Slices: <span className="text-white">{formData.pair_count * 2}</span></p>
+              <p className="text-gray-200">Name: <span className="text-white">{formData.custom_name || 'Auto-generated'}</span></p>
+              <p className="text-gray-200">Location Type: <span className="text-white capitalize">{formData.location_type}</span></p>
+              <p className="text-gray-200">Category: <span className="text-white capitalize">{formData.category}</span></p>
+              <p className="text-gray-200">Pairs: <span className="text-white">{formData.pair_count}</span></p>
+              <p className="text-gray-200">Total Slices: <span className="text-white">{formData.pair_count * 2}</span></p>
             </div>
           </div>
 
@@ -367,17 +367,17 @@ const GeneratePlaceTab = () => {
           </div>
 
           <h3 className="text-xl font-semibold text-white mb-2">Place Created!</h3>
-          <p className="text-gray-400 mb-6">
+          <p className="text-gray-200 mb-6">
             The place has been created and is ready for minting.
           </p>
 
           {result && (
             <div className="mb-6 p-4 bg-dark rounded text-left">
-              <p className="text-gray-400 text-sm">Place ID: <span className="text-white">{result.place?.id}</span></p>
-              <p className="text-gray-400 text-sm">Token ID: <span className="text-white">{result.place?.token_id}</span></p>
-              <p className="text-gray-400 text-sm">Slices: <span className="text-white">{result.slices?.length || 0}</span></p>
+              <p className="text-gray-200 text-sm">Place ID: <span className="text-white">{result.place?.id}</span></p>
+              <p className="text-gray-200 text-sm">Token ID: <span className="text-white">{result.place?.token_id}</span></p>
+              <p className="text-gray-200 text-sm">Slices: <span className="text-white">{result.slices?.length || 0}</span></p>
               {result.metadata_uri && (
-                <p className="text-gray-400 text-sm truncate">
+                <p className="text-gray-200 text-sm truncate">
                   Metadata: <a href={result.metadata_uri} target="_blank" rel="noopener noreferrer" className="text-primary">{result.metadata_uri}</a>
                 </p>
               )}
@@ -388,7 +388,7 @@ const GeneratePlaceTab = () => {
             <div className="mb-6 p-4 bg-green-500/10 border border-green-500/30 rounded text-left">
               <p className="text-green-400 font-semibold mb-2">NFT Minted!</p>
               {mintResult.transaction?.hash && (
-                <p className="text-gray-400 text-sm truncate">
+                <p className="text-gray-200 text-sm truncate">
                   Tx Hash: <span className="text-white">{mintResult.transaction.hash}</span>
                 </p>
               )}
@@ -418,11 +418,11 @@ const GeneratePlaceTab = () => {
 const StepIndicator = ({ number, active, completed, children }) => (
   <div className="flex flex-col items-center">
     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-      completed ? 'bg-green-500 text-white' : active ? 'bg-primary text-white' : 'bg-gray-700 text-gray-400'
+      completed ? 'bg-green-500 text-white' : active ? 'bg-primary text-white' : 'bg-gray-700 text-gray-200'
     }`}>
       {completed ? '✓' : number}
     </div>
-    <span className={`text-xs mt-1 ${active ? 'text-white' : 'text-gray-500'}`}>{children}</span>
+    <span className={`text-xs mt-1 ${active ? 'text-white' : 'text-gray-300'}`}>{children}</span>
   </div>
 );
 

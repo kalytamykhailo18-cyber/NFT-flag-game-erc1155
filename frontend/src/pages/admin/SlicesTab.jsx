@@ -46,7 +46,7 @@ const SlicesTab = () => {
 
       {/* Place Selector */}
       <div className="mb-6">
-        <label className="block text-gray-400 text-sm mb-2">Select Place</label>
+        <label className="block text-gray-200 text-sm mb-2">Select Place</label>
         <select
           value={selectedPlace}
           onChange={(e) => handlePlaceChange(e.target.value)}
@@ -64,7 +64,7 @@ const SlicesTab = () => {
       {/* Slices Display */}
       {!selectedPlace ? (
         <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-          <div className="text-gray-500 text-lg">Select a place to view its slices</div>
+          <div className="text-gray-300 text-lg">Select a place to view its slices</div>
         </div>
       ) : loadingSlices ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -74,8 +74,8 @@ const SlicesTab = () => {
         </div>
       ) : slices.length === 0 ? (
         <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-          <div className="text-gray-500 text-lg">No slices found for this place</div>
-          <p className="text-gray-600 mt-2">Generate slices using the "Generate Place" tab</p>
+          <div className="text-gray-300 text-lg">No slices found for this place</div>
+          <p className="text-gray-500 mt-2">Generate slices using the "Generate Place" tab</p>
         </div>
       ) : (
         <div>
@@ -92,10 +92,10 @@ const SlicesTab = () => {
                 )}
                 <div>
                   <h3 className="text-white font-semibold text-lg">{selectedPlaceData.name}</h3>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-gray-200 text-sm">
                     {selectedPlaceData.pair_count} pairs ({selectedPlaceData.pair_count * 2} slices)
                   </p>
-                  <p className="text-gray-500 text-sm capitalize">
+                  <p className="text-gray-300 text-sm capitalize">
                     Category: {selectedPlaceData.category} | Location: {selectedPlaceData.location_type}
                   </p>
                 </div>
@@ -126,7 +126,7 @@ const SliceCard = ({ slice }) => {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-600">
+          <div className="w-full h-full flex items-center justify-center text-gray-500">
             No Image
           </div>
         )}
@@ -142,7 +142,7 @@ const SliceCard = ({ slice }) => {
             <span className="px-2 py-0.5 text-xs bg-green-500/20 text-green-400 rounded">Available</span>
           )}
         </div>
-        <div className="text-gray-500 text-xs space-y-1">
+        <div className="text-gray-300 text-xs space-y-1">
           <p>ID: {slice.id}</p>
           <p>Price: {slice.price} MATIC</p>
           {slice.image_sha256 && (

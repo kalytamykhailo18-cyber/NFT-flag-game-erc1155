@@ -13,7 +13,7 @@ const PlaceCard = ({ place, userProgress = null }) => {
       case 'special':
         return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+        return 'bg-gray-500/20 text-gray-200 border-gray-500/30';
     }
   };
 
@@ -36,7 +36,7 @@ const PlaceCard = ({ place, userProgress = null }) => {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-600">
+          <div className="w-full h-full flex items-center justify-center text-gray-500">
             No Image
           </div>
         )}
@@ -61,7 +61,7 @@ const PlaceCard = ({ place, userProgress = null }) => {
       {/* Content */}
       <div className="p-4">
         <h3 className="text-white font-semibold truncate">{place.name}</h3>
-        <p className="text-gray-400 text-sm truncate mt-1">
+        <p className="text-gray-200 text-sm truncate mt-1">
           {place.municipality?.name || 'Unknown location'}
         </p>
 
@@ -80,7 +80,7 @@ const PlaceCard = ({ place, userProgress = null }) => {
             {config.formatPrice(place.price)} MATIC
           </span>
           {place.interest_count > 0 && (
-            <span className="text-gray-500 text-sm">
+            <span className="text-gray-300 text-sm">
               {place.interest_count} interested
             </span>
           )}

@@ -65,7 +65,7 @@ const PlacesTab = () => {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-white">Places</h2>
-        <p className="text-gray-400 text-sm">Use "Generate Place" tab to create new places</p>
+        <p className="text-gray-200 text-sm">Use "Generate Place" tab to create new places</p>
       </div>
 
       {/* Filters */}
@@ -100,20 +100,20 @@ const PlacesTab = () => {
         </div>
       ) : filteredPlaces.length === 0 ? (
         <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-          <div className="text-gray-500 text-lg">No places found</div>
+          <div className="text-gray-300 text-lg">No places found</div>
         </div>
       ) : (
         <div className="bg-dark-lighter border border-gray-800 rounded-lg overflow-hidden">
           <table className="w-full">
             <thead className="bg-dark">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Place</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Municipality</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Category</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Pairs</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Token ID</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
-                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Place</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Municipality</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Category</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Pairs</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Token ID</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Status</th>
+                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-200 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
@@ -129,7 +129,7 @@ const PlacesTab = () => {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+                          <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
                             -
                           </div>
                         )}
@@ -137,17 +137,17 @@ const PlacesTab = () => {
                       <span className="text-white font-medium">{place.name}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-400">{getMunicipalityName(place.municipality_id)}</td>
+                  <td className="px-4 py-3 text-gray-200">{getMunicipalityName(place.municipality_id)}</td>
                   <td className="px-4 py-3">
                     <CategoryBadge category={place.category} />
                   </td>
                   <td className="px-4 py-3 text-white">{place.pair_count}</td>
-                  <td className="px-4 py-3 text-gray-400">{place.token_id || '-'}</td>
+                  <td className="px-4 py-3 text-gray-200">{place.token_id || '-'}</td>
                   <td className="px-4 py-3">
                     {place.is_minted ? (
                       <span className="px-2 py-1 text-xs bg-green-500/20 text-green-400 rounded">Minted</span>
                     ) : (
-                      <span className="px-2 py-1 text-xs bg-gray-500/20 text-gray-400 rounded">Not Minted</span>
+                      <span className="px-2 py-1 text-xs bg-gray-500/20 text-gray-200 rounded">Not Minted</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -191,7 +191,7 @@ const FilterButton = ({ active, onClick, children }) => (
     className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
       active
         ? 'bg-primary text-white'
-        : 'bg-dark text-gray-400 hover:text-white'
+        : 'bg-dark text-gray-200 hover:text-white'
     }`}
   >
     {children}
@@ -202,7 +202,7 @@ const CategoryBadge = ({ category }) => {
   const classes = {
     premium: 'bg-yellow-500/20 text-yellow-400',
     plus: 'bg-blue-500/20 text-blue-400',
-    standard: 'bg-gray-500/20 text-gray-400',
+    standard: 'bg-gray-500/20 text-gray-200',
   };
 
   return (

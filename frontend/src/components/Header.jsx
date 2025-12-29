@@ -41,7 +41,7 @@ const Header = () => {
                 className={`text-sm font-medium transition-colors ${
                   isActive(link.path)
                     ? 'text-primary'
-                    : 'text-gray-400 hover:text-white'
+                    : 'text-gray-200 hover:text-white'
                 }`}
               >
                 {link.label}
@@ -57,7 +57,7 @@ const Header = () => {
                 className={`text-sm font-medium transition-colors ${
                   isActive('/profile')
                     ? 'text-primary'
-                    : 'text-gray-400 hover:text-white'
+                    : 'text-gray-200 hover:text-white'
                 }`}
               >
                 Profile

@@ -68,7 +68,7 @@ const AuctionDetail = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumb */}
-      <nav className="text-sm text-gray-400 mb-6">
+      <nav className="text-sm text-gray-200 mb-6">
         <Link to="/auctions" className="hover:text-white">Auctions</Link>
         <span className="mx-2">/</span>
         <span className="text-white">Auction #{auction.id}</span>
@@ -85,7 +85,7 @@ const AuctionDetail = () => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-600">
+              <div className="w-full h-full flex items-center justify-center text-gray-500">
                 No Image
               </div>
             )}
@@ -95,13 +95,13 @@ const AuctionDetail = () => {
             <h1 className="text-2xl font-bold text-white mb-2">
               {auction.place?.name || `Place #${auction.place_id}`}
             </h1>
-            <p className="text-gray-400">
+            <p className="text-gray-200">
               Token ID: {auction.place?.token_id}
             </p>
 
             <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-500">Status:</span>
+                <span className="text-gray-300">Status:</span>
                 <span className={`ml-2 capitalize ${
                   auction.status === 'active' ? 'text-green-400' :
                   auction.status === 'ended' ? 'text-blue-400' :
@@ -111,17 +111,17 @@ const AuctionDetail = () => {
                 </span>
               </div>
               <div>
-                <span className="text-gray-500">Created by:</span>
+                <span className="text-gray-300">Created by:</span>
                 <span className="text-white ml-2">
                   {config.truncateAddress(auction.seller?.wallet_address)}
                 </span>
               </div>
               <div>
-                <span className="text-gray-500">Start:</span>
+                <span className="text-gray-300">Start:</span>
                 <span className="text-white ml-2">{formatDate(auction.start_time)}</span>
               </div>
               <div>
-                <span className="text-gray-500">End:</span>
+                <span className="text-gray-300">End:</span>
                 <span className="text-white ml-2">{formatDate(auction.end_time)}</span>
               </div>
             </div>
@@ -133,13 +133,13 @@ const AuctionDetail = () => {
           {/* Current Price */}
           <div className="bg-dark-lighter border border-gray-800 rounded-lg p-6 mb-6">
             <div className="text-center">
-              <div className="text-gray-400 mb-2">
+              <div className="text-gray-200 mb-2">
                 {auction.status === 'ended' ? 'Final Price' : 'Current Bid'}
               </div>
               <div className="text-4xl font-bold text-primary">
                 {config.formatPrice(currentBid)} MATIC
               </div>
-              <div className="text-gray-500 mt-2">
+              <div className="text-gray-300 mt-2">
                 Starting: {config.formatPrice(auction.starting_price)} MATIC | Min Increment: {config.formatPrice(auction.min_increment)} MATIC
               </div>
             </div>
@@ -148,7 +148,7 @@ const AuctionDetail = () => {
               <div className="mt-6 space-y-4">
                 {/* Bid Input */}
                 <div>
-                  <label className="block text-gray-400 text-sm mb-2">Your Bid (MATIC)</label>
+                  <label className="block text-gray-200 text-sm mb-2">Your Bid (MATIC)</label>
                   <input
                     type="number"
                     step="0.001"
@@ -182,7 +182,7 @@ const AuctionDetail = () => {
           <div className="bg-dark-lighter border border-gray-800 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-white mb-4">Bid History</h2>
             {!auction.bids || auction.bids.length === 0 ? (
-              <div className="text-gray-500 text-center py-4">No bids yet</div>
+              <div className="text-gray-300 text-center py-4">No bids yet</div>
             ) : (
               <div className="space-y-3">
                 {auction.bids.map((bid, index) => (
@@ -196,11 +196,11 @@ const AuctionDetail = () => {
                       <div className="text-white font-medium">
                         {config.formatPrice(bid.amount)} MATIC
                       </div>
-                      <div className="text-gray-500 text-sm">
+                      <div className="text-gray-300 text-sm">
                         {config.truncateAddress(bid.bidder?.wallet_address)}
                       </div>
                     </div>
-                    <div className="text-gray-500 text-sm">
+                    <div className="text-gray-300 text-sm">
                       {new Date(bid.created_at).toLocaleTimeString()}
                     </div>
                   </div>

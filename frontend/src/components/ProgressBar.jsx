@@ -8,7 +8,7 @@ const ProgressBar = ({ current, total, label = '' }) => {
   return (
     <div>
       <div className="flex justify-between items-center mb-1">
-        <span className="text-gray-400 text-sm">
+        <span className="text-gray-200 text-sm">
           {label && `${label}: `}{current}/{total}
         </span>
         {isComplete && (

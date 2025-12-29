@@ -26,7 +26,7 @@ const Auctions = () => {
       case 'cancelled':
         return 'bg-red-500/20 text-red-400';
       default:
-        return 'bg-gray-500/20 text-gray-400';
+        return 'bg-gray-500/20 text-gray-200';
     }
   };
 
@@ -60,7 +60,7 @@ const Auctions = () => {
             className={`px-4 py-2 rounded-lg font-medium capitalize transition-colors ${
               filter === status
                 ? 'bg-primary text-white'
-                : 'bg-dark-lighter text-gray-400 hover:text-white'
+                : 'bg-dark-lighter text-gray-200 hover:text-white'
             }`}
           >
             {status}
@@ -77,7 +77,7 @@ const Auctions = () => {
         </div>
       ) : auctions.length === 0 ? (
         <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-          <div className="text-gray-500 text-lg">No {filter} auctions</div>
+          <div className="text-gray-300 text-lg">No {filter} auctions</div>
         </div>
       ) : (
         <div className="space-y-4">
@@ -97,7 +97,7 @@ const Auctions = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-600 text-sm">
+                    <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">
                       No Image
                     </div>
                   )}
@@ -116,16 +116,16 @@ const Auctions = () => {
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-500">Starting Price:</span>
+                      <span className="text-gray-300">Starting Price:</span>
                       <span className="text-white ml-2">{config.formatPrice(auction.starting_price)} MATIC</span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Bids:</span>
+                      <span className="text-gray-300">Bids:</span>
                       <span className="text-white ml-2">{auction.bids?.length || 0}</span>
                     </div>
                     {auction.status === 'active' && (
                       <div>
-                        <span className="text-gray-500">Time Left:</span>
+                        <span className="text-gray-300">Time Left:</span>
                         <span className="text-yellow-400 ml-2">{formatTimeLeft(auction.end_time)}</span>
                       </div>
                     )}
@@ -134,7 +134,7 @@ const Auctions = () => {
 
                 {/* Current Bid */}
                 <div className="text-right">
-                  <div className="text-gray-500 text-sm">
+                  <div className="text-gray-300 text-sm">
                     {auction.status === 'ended' ? 'Final Price' : 'Current Bid'}
                   </div>
                   <div className="text-primary font-bold text-xl">

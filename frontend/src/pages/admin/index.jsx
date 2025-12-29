@@ -94,7 +94,7 @@ const AdminIndex = () => {
             className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
               activeTab === tab.id
                 ? 'bg-primary text-white'
-                : 'bg-dark-lighter text-gray-400 hover:text-white'
+                : 'bg-dark-lighter text-gray-200 hover:text-white'
             }`}
           >
             {tab.label}
@@ -111,7 +111,7 @@ const AdminIndex = () => {
 const StatCard = ({ label, value }) => (
   <div className="bg-dark-lighter border border-gray-800 rounded-lg p-4">
     <div className="text-2xl font-bold text-white">{value}</div>
-    <div className="text-gray-400 text-sm">{label}</div>
+    <div className="text-gray-200 text-sm">{label}</div>
   </div>
 );
 

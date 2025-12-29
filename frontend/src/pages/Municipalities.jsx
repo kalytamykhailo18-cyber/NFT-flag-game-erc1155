@@ -22,7 +22,7 @@ const Municipalities = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumb */}
-      <nav className="text-sm text-gray-400 mb-6">
+      <nav className="text-sm text-gray-200 mb-6">
         <Link to="/countries" className="hover:text-white">Countries</Link>
         <span className="mx-2">/</span>
         {region?.country && (
@@ -48,7 +48,7 @@ const Municipalities = () => {
         </div>
       ) : municipalities.length === 0 ? (
         <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-          <div className="text-gray-500 text-lg">No municipalities available</div>
+          <div className="text-gray-300 text-lg">No municipalities available</div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -62,7 +62,7 @@ const Municipalities = () => {
                 <div>
                   <h2 className="text-white font-semibold text-lg">{municipality.name}</h2>
                   {municipality.latitude && municipality.longitude && (
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-300 text-sm">
                       {parseFloat(municipality.latitude).toFixed(4)}, {parseFloat(municipality.longitude).toFixed(4)}
                     </p>
                   )}
@@ -71,7 +71,7 @@ const Municipalities = () => {
                   <div className="text-primary font-medium">
                     {municipality.place_count || 0}
                   </div>
-                  <div className="text-gray-500 text-sm">places</div>
+                  <div className="text-gray-300 text-sm">places</div>
                 </div>
               </div>
             </Link>

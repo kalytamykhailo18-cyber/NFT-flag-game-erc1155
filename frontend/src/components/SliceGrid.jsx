@@ -76,7 +76,7 @@ const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disa
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+                      <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
                         No Image
                       </div>
                     )}
@@ -88,7 +88,7 @@ const SliceGrid = ({ slices, pairCount, userOwnedSliceIds = [], onPurchase, disa
                       <span className={`text-xs px-1 py-0.5 rounded ${
                         status === 'available' ? 'bg-green-500/20 text-green-400' :
                         status === 'owned_by_user' ? 'bg-blue-500/20 text-blue-400' :
-                        'bg-gray-500/20 text-gray-400'
+                        'bg-gray-500/20 text-gray-200'
                       }`}>
                         {getStatusLabel(status)}
                       </span>

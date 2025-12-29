@@ -27,26 +27,26 @@ const Countries = () => {
         </div>
       ) : countries.length === 0 ? (
         <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-          <div className="text-gray-500 text-lg">No countries available</div>
+          <div className="text-gray-300 text-lg">No countries available</div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex flex-wrap gap-4">
           {countries.map((country) => (
             <Link
               key={country.id}
               to={`/countries/${country.id}/regions`}
-              className="bg-dark-lighter border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors"
+              className="bg-dark-lighter flex-1 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors"
             >
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="text-white font-semibold text-lg">{country.name}</h2>
-                  <p className="text-gray-400 text-sm">{country.code}</p>
+                  <p className="text-gray-200 text-sm">{country.code}</p>
                 </div>
                 <div className="text-right">
                   <div className="text-primary font-medium">
                     {country.region_count || 0}
                   </div>
-                  <div className="text-gray-500 text-sm">regions</div>
+                  <div className="text-gray-300 text-sm">regions</div>
                 </div>
               </div>
             </Link>

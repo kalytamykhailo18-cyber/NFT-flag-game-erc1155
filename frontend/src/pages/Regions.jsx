@@ -22,7 +22,7 @@ const Regions = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumb */}
-      <nav className="text-sm text-gray-400 mb-6">
+      <nav className="text-sm text-gray-200 mb-6">
         <Link to="/countries" className="hover:text-white">Countries</Link>
         <span className="mx-2">/</span>
         <span className="text-white">{country?.name || 'Loading...'}</span>
@@ -40,7 +40,7 @@ const Regions = () => {
         </div>
       ) : regions.length === 0 ? (
         <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-          <div className="text-gray-500 text-lg">No regions available</div>
+          <div className="text-gray-300 text-lg">No regions available</div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -54,14 +54,14 @@ const Regions = () => {
                 <div>
                   <h2 className="text-white font-semibold text-lg">{region.name}</h2>
                   {region.code && (
-                    <p className="text-gray-400 text-sm">{region.code}</p>
+                    <p className="text-gray-200 text-sm">{region.code}</p>
                   )}
                 </div>
                 <div className="text-right">
                   <div className="text-primary font-medium">
                     {region.municipality_count || 0}
                   </div>
-                  <div className="text-gray-500 text-sm">municipalities</div>
+                  <div className="text-gray-300 text-sm">municipalities</div>
                 </div>
               </div>
             </Link>

@@ -46,7 +46,7 @@ const Profile = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-          <div className="text-gray-500 text-lg mb-4">Connect your wallet to view your profile</div>
+          <div className="text-gray-300 text-lg mb-4">Connect your wallet to view your profile</div>
         </div>
       </div>
     );
@@ -74,7 +74,7 @@ const Profile = () => {
       case 'special':
         return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+        return 'bg-gray-500/20 text-gray-200 border-gray-500/30';
     }
   };
 
@@ -87,7 +87,7 @@ const Profile = () => {
             <h1 className="text-2xl font-bold text-white">
               {user?.username || 'Unnamed Collector'}
             </h1>
-            <p className="text-gray-400 mt-1">
+            <p className="text-gray-200 mt-1">
               {config.truncateAddress(address)}
             </p>
           </div>
@@ -102,19 +102,19 @@ const Profile = () => {
             <div className="text-3xl font-bold text-primary">
               {user?.total_places_claimed || 0}
             </div>
-            <div className="text-gray-400 text-sm">Places Claimed</div>
+            <div className="text-gray-200 text-sm">Places Claimed</div>
           </div>
           <div className="bg-dark rounded-lg p-4 text-center">
             <div className="text-3xl font-bold text-white">
               {user?.total_slices_owned || 0}
             </div>
-            <div className="text-gray-400 text-sm">Slices Owned</div>
+            <div className="text-gray-200 text-sm">Slices Owned</div>
           </div>
           <div className="bg-dark rounded-lg p-4 text-center">
             <div className="text-3xl font-bold text-yellow-400">
               {user?.reputation_score || 0}
             </div>
-            <div className="text-gray-400 text-sm">Reputation</div>
+            <div className="text-gray-200 text-sm">Reputation</div>
           </div>
         </div>
       </div>
@@ -126,7 +126,7 @@ const Profile = () => {
           className={`px-6 py-3 rounded-lg font-medium transition-colors ${
             activeTab === 'slices'
               ? 'bg-primary text-white'
-              : 'bg-dark-lighter text-gray-400 hover:text-white'
+              : 'bg-dark-lighter text-gray-200 hover:text-white'
           }`}
         >
           Owned Slices ({ownedSlices.length})
@@ -136,7 +136,7 @@ const Profile = () => {
           className={`px-6 py-3 rounded-lg font-medium transition-colors ${
             activeTab === 'places'
               ? 'bg-primary text-white'
-              : 'bg-dark-lighter text-gray-400 hover:text-white'
+              : 'bg-dark-lighter text-gray-200 hover:text-white'
           }`}
         >
           Claimed Places ({claimedPlaces.length})
@@ -147,7 +147,7 @@ const Profile = () => {
       {activeTab === 'slices' ? (
         ownedSlices.length === 0 ? (
           <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-            <div className="text-gray-500 text-lg mb-2">No slices owned yet</div>
+            <div className="text-gray-300 text-lg mb-2">No slices owned yet</div>
             <Link to="/places" className="text-primary hover:text-primary/80">
               Browse places to start collecting
             </Link>
@@ -168,7 +168,7 @@ const Profile = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-600">
+                    <div className="w-full h-full flex items-center justify-center text-gray-500">
                       No Image
                     </div>
                   )}
@@ -177,7 +177,7 @@ const Profile = () => {
                   <div className="text-white text-sm font-medium truncate">
                     {slice.place?.name || `Place #${slice.place_id}`}
                   </div>
-                  <div className="text-gray-500 text-xs">
+                  <div className="text-gray-300 text-xs">
                     Pair {slice.pair_number}, Pos {slice.slice_position}
                   </div>
                 </div>
@@ -188,8 +188,8 @@ const Profile = () => {
       ) : (
         claimedPlaces.length === 0 ? (
           <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-            <div className="text-gray-500 text-lg mb-2">No places claimed yet</div>
-            <p className="text-gray-600">Complete all pairs of a place to claim it</p>
+            <div className="text-gray-300 text-lg mb-2">No places claimed yet</div>
+            <p className="text-gray-500">Complete all pairs of a place to claim it</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -207,18 +207,18 @@ const Profile = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-600">
+                    <div className="w-full h-full flex items-center justify-center text-gray-500">
                       No Image
                     </div>
                   )}
                 </div>
                 <div className="p-4">
                   <h3 className="text-white font-semibold">{place.name}</h3>
-                  <p className="text-gray-400 text-sm mt-1">
+                  <p className="text-gray-200 text-sm mt-1">
                     {place.municipality?.name}
                   </p>
                   <div className="flex justify-between items-center mt-3">
-                    <span className="text-gray-500 text-sm">Token ID: {place.token_id}</span>
+                    <span className="text-gray-300 text-sm">Token ID: {place.token_id}</span>
                     <span className="text-green-400 text-sm">Claimed</span>
                   </div>
                 </div>

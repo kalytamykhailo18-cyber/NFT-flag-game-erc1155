@@ -91,7 +91,7 @@ const CountriesTab = () => {
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
-                <label className="block text-gray-400 text-sm mb-2">Name</label>
+                <label className="block text-gray-200 text-sm mb-2">Name</label>
                 <input
                   type="text"
                   value={formData.name}
@@ -102,7 +102,7 @@ const CountriesTab = () => {
                 />
               </div>
               <div>
-                <label className="block text-gray-400 text-sm mb-2">Code (2-3 letters)</label>
+                <label className="block text-gray-200 text-sm mb-2">Code (2-3 letters)</label>
                 <input
                   type="text"
                   value={formData.code}
@@ -144,27 +144,27 @@ const CountriesTab = () => {
         </div>
       ) : countries.length === 0 ? (
         <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-          <div className="text-gray-500 text-lg">No countries yet</div>
+          <div className="text-gray-300 text-lg">No countries yet</div>
         </div>
       ) : (
         <div className="bg-dark-lighter border border-gray-800 rounded-lg overflow-hidden">
           <table className="w-full">
             <thead className="bg-dark">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">ID</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Code</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Regions</th>
-                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">ID</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Code</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Regions</th>
+                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-200 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
               {countries.map((country) => (
                 <tr key={country.id} className="hover:bg-dark/50">
-                  <td className="px-4 py-3 text-gray-400">{country.id}</td>
+                  <td className="px-4 py-3 text-gray-200">{country.id}</td>
                   <td className="px-4 py-3 text-white font-medium">{country.name}</td>
-                  <td className="px-4 py-3 text-gray-400">{country.code}</td>
-                  <td className="px-4 py-3 text-gray-400">{country.region_count || 0}</td>
+                  <td className="px-4 py-3 text-gray-200">{country.code}</td>
+                  <td className="px-4 py-3 text-gray-200">{country.region_count || 0}</td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => handleEdit(country)}

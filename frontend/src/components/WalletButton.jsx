@@ -31,7 +31,7 @@ const WalletButton = () => {
   if (isConnected && address) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-gray-400 text-sm hidden sm:inline">
+        <span className="text-gray-200 text-sm hidden sm:inline">
           {config.truncateAddress(address)}
         </span>
         <button
@@ -47,7 +47,7 @@ const WalletButton = () => {
   return (
     <button
       onClick={handleConnect}
-      className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors"
+      className="px-4 py-2 bg-primary text-white rounded-sm hover:bg-primary/80 transition-colors"
     >
       Connect Wallet
     </button>

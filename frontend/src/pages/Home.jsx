@@ -27,20 +27,20 @@ const Home = () => {
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
           Collect Unique Place NFTs
         </h1>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+        <p className="text-gray-200 text-lg max-w-2xl mx-auto">
           Discover and collect photo slices of amazing places around the world.
           Complete all pairs to claim the place as your own NFT!
         </p>
         <div className="mt-6 flex justify-center gap-4">
           <Link
             to="/places"
-            className="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/80 transition-colors"
+            className="px-6 py-3 bg-primary text-white rounded-sm font-medium hover:bg-primary/80 transition-colors"
           >
             Explore Places
           </Link>
           <Link
             to="/countries"
-            className="px-6 py-3 bg-gray-700 text-white rounded-lg font-medium hover:bg-gray-600 transition-colors"
+            className="px-6 py-3 bg-gray-700 text-white rounded-sm font-medium hover:bg-gray-600 transition-colors"
           >
             Browse by Country
           </Link>
@@ -70,7 +70,7 @@ const Home = () => {
                 className="bg-dark-lighter border border-gray-800 rounded-lg p-4 hover:border-gray-700 transition-colors"
               >
                 <div className="text-white font-medium">{country.name}</div>
-                <div className="text-gray-400 text-sm">{country.code}</div>
+                <div className="text-gray-200 text-sm">{country.code}</div>
               </Link>
             ))}
           </div>

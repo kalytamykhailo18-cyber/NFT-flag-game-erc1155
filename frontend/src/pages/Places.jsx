@@ -73,8 +73,8 @@ const Places = () => {
         </div>
       ) : places.length === 0 ? (
         <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-          <div className="text-gray-500 text-lg">No places found</div>
-          <p className="text-gray-600 mt-2">Try adjusting your filters</p>
+          <div className="text-gray-300 text-lg">No places found</div>
+          <p className="text-gray-500 mt-2">Try adjusting your filters</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

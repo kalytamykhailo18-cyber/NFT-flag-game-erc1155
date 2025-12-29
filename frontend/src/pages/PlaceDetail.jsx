@@ -46,7 +46,7 @@ const PlaceDetail = () => {
       case 'special':
         return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+        return 'bg-gray-500/20 text-gray-200 border-gray-500/30';
     }
   };
 
@@ -140,7 +140,7 @@ const PlaceDetail = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumb */}
-      <nav className="text-sm text-gray-400 mb-6">
+      <nav className="text-sm text-gray-200 mb-6">
         <Link to="/places" className="hover:text-white">Places</Link>
         <span className="mx-2">/</span>
         <span className="text-white">{place.name}</span>
@@ -158,7 +158,7 @@ const PlaceDetail = () => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-600">
+              <div className="w-full h-full flex items-center justify-center text-gray-500">
                 No Image
               </div>
             )}
@@ -169,7 +169,7 @@ const PlaceDetail = () => {
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h1 className="text-2xl font-bold text-white">{place.name}</h1>
-                <p className="text-gray-400">
+                <p className="text-gray-200">
                   {place.municipality?.name}, {place.municipality?.region?.name}
                 </p>
               </div>
@@ -180,22 +180,22 @@ const PlaceDetail = () => {
 
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-500">Location Type:</span>
+                <span className="text-gray-300">Location Type:</span>
                 <span className="text-white ml-2">{place.location_type}</span>
               </div>
               <div>
-                <span className="text-gray-500">Token ID:</span>
+                <span className="text-gray-300">Token ID:</span>
                 <span className="text-white ml-2">{place.token_id}</span>
               </div>
               <div>
-                <span className="text-gray-500">Price:</span>
+                <span className="text-gray-300">Price:</span>
                 <span className="text-primary ml-2">{config.formatPrice(place.price)} MATIC</span>
               </div>
             </div>
 
             {/* Interest */}
             <div className="mt-4 flex items-center justify-between">
-              <span className="text-gray-400">
+              <span className="text-gray-200">
                 {place.interest_count || 0} people interested
               </span>
               {!place.is_claimed && (
@@ -226,14 +226,14 @@ const PlaceDetail = () => {
           <div className="bg-dark-lighter border border-gray-800 rounded-lg p-6 mt-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-white">Your Progress</h2>
-              <span className="text-gray-400 text-sm">{place.pair_count} pairs total</span>
+              <span className="text-gray-200 text-sm">{place.pair_count} pairs total</span>
             </div>
             <ProgressBar
               current={progress.completed_pairs}
               total={progress.pair_count}
               label="Pairs complete"
             />
-            <p className="text-gray-400 text-sm mt-2">
+            <p className="text-gray-200 text-sm mt-2">
               {progress.owned_slices} of {progress.total_slices} slices owned
             </p>
 
@@ -244,7 +244,7 @@ const PlaceDetail = () => {
               className={`w-full mt-4 py-3 rounded-lg font-medium transition-colors ${
                 canClaim
                   ? 'bg-green-500 text-white hover:bg-green-600'
-                  : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  : 'bg-gray-700 text-gray-200 cursor-not-allowed'
               }`}
             >
               {claiming

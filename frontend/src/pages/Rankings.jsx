@@ -44,7 +44,7 @@ const Rankings = () => {
           className={`px-6 py-3 rounded-lg font-medium transition-colors ${
             activeTab === 'users'
               ? 'bg-primary text-white'
-              : 'bg-dark-lighter text-gray-400 hover:text-white'
+              : 'bg-dark-lighter text-gray-200 hover:text-white'
           }`}
         >
           Top Collectors
@@ -54,7 +54,7 @@ const Rankings = () => {
           className={`px-6 py-3 rounded-lg font-medium transition-colors ${
             activeTab === 'places'
               ? 'bg-primary text-white'
-              : 'bg-dark-lighter text-gray-400 hover:text-white'
+              : 'bg-dark-lighter text-gray-200 hover:text-white'
           }`}
         >
           Popular Places
@@ -81,7 +81,7 @@ const UserRankings = ({ rankings }) => {
   if (rankings.length === 0) {
     return (
       <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-        <div className="text-gray-500 text-lg">No rankings available</div>
+        <div className="text-gray-300 text-lg">No rankings available</div>
       </div>
     );
   }
@@ -90,7 +90,7 @@ const UserRankings = ({ rankings }) => {
     if (rank === 1) return 'bg-yellow-500 text-black';
     if (rank === 2) return 'bg-gray-300 text-black';
     if (rank === 3) return 'bg-amber-600 text-white';
-    return 'bg-dark text-gray-400';
+    return 'bg-dark text-gray-200';
   };
 
   const getCategoryBadge = (category) => {
@@ -100,7 +100,7 @@ const UserRankings = ({ rankings }) => {
       case 'special':
         return 'bg-blue-500/20 text-blue-400';
       default:
-        return 'bg-gray-500/20 text-gray-400';
+        return 'bg-gray-500/20 text-gray-200';
     }
   };
 
@@ -109,12 +109,12 @@ const UserRankings = ({ rankings }) => {
       <table className="w-full">
         <thead className="bg-dark">
           <tr>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Rank</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">User</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Category</th>
-            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase">Places Claimed</th>
-            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase">Slices Owned</th>
-            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase">Reputation</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Rank</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">User</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Category</th>
+            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-200 uppercase">Places Claimed</th>
+            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-200 uppercase">Slices Owned</th>
+            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-200 uppercase">Reputation</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-800">
@@ -129,7 +129,7 @@ const UserRankings = ({ rankings }) => {
                 <div className="text-white font-medium">
                   {user.username || config.truncateAddress(user.wallet_address)}
                 </div>
-                <div className="text-gray-500 text-sm">
+                <div className="text-gray-300 text-sm">
                   {config.truncateAddress(user.wallet_address)}
                 </div>
               </td>
@@ -141,7 +141,7 @@ const UserRankings = ({ rankings }) => {
               <td className="px-4 py-4 text-right text-white font-medium">
                 {user.total_places_claimed}
               </td>
-              <td className="px-4 py-4 text-right text-gray-400">
+              <td className="px-4 py-4 text-right text-gray-200">
                 {user.total_slices_owned}
               </td>
               <td className="px-4 py-4 text-right text-primary font-medium">
@@ -159,7 +159,7 @@ const PlaceRankings = ({ rankings }) => {
   if (rankings.length === 0) {
     return (
       <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
-        <div className="text-gray-500 text-lg">No rankings available</div>
+        <div className="text-gray-300 text-lg">No rankings available</div>
       </div>
     );
   }
@@ -169,18 +169,18 @@ const PlaceRankings = ({ rankings }) => {
       <table className="w-full">
         <thead className="bg-dark">
           <tr>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Rank</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Place</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Category</th>
-            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase">Interest</th>
-            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-400 uppercase">Status</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Rank</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Place</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-200 uppercase">Category</th>
+            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-200 uppercase">Interest</th>
+            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-200 uppercase">Status</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-800">
           {rankings.map((place, index) => (
             <tr key={place.id} className="hover:bg-dark/50">
               <td className="px-4 py-4">
-                <span className="text-gray-400 font-medium">#{index + 1}</span>
+                <span className="text-gray-200 font-medium">#{index + 1}</span>
               </td>
               <td className="px-4 py-4">
                 <Link
@@ -195,14 +195,14 @@ const PlaceRankings = ({ rankings }) => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+                      <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">
                         -
                       </div>
                     )}
                   </div>
                   <div>
                     <div className="text-white font-medium">{place.name}</div>
-                    <div className="text-gray-500 text-sm">{place.municipality?.name}</div>
+                    <div className="text-gray-300 text-sm">{place.municipality?.name}</div>
                   </div>
                 </Link>
               </td>
@@ -210,7 +210,7 @@ const PlaceRankings = ({ rankings }) => {
                 <span className={`px-2 py-1 text-xs rounded capitalize ${
                   place.category === 'premium' ? 'bg-yellow-500/20 text-yellow-400' :
                   place.category === 'special' ? 'bg-blue-500/20 text-blue-400' :
-                  'bg-gray-500/20 text-gray-400'
+                  'bg-gray-500/20 text-gray-200'
                 }`}>
                   {place.category}
                 </span>
@@ -222,7 +222,7 @@ const PlaceRankings = ({ rankings }) => {
                 {place.is_claimed ? (
                   <span className="text-green-400">Claimed</span>
                 ) : (
-                  <span className="text-gray-400">Available</span>
+                  <span className="text-gray-200">Available</span>
                 )}
               </td>
             </tr>

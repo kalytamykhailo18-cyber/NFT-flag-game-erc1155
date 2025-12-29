@@ -53,7 +53,7 @@ const AdminDashboard = () => {
               <StatusRow label="Files Pinned" value={ipfsStatus.pinned_count || 0} />
             </div>
           ) : (
-            <p className="text-gray-500">Loading IPFS status...</p>
+            <p className="text-gray-300">Loading IPFS status...</p>
           )}
         </div>
 
@@ -73,7 +73,7 @@ const AdminDashboard = () => {
               <StatusRow label="Total Slices" value={stats.slices || 0} />
             </div>
           ) : (
-            <p className="text-gray-500">Loading database stats...</p>
+            <p className="text-gray-300">Loading database stats...</p>
           )}
         </div>
       </div>
@@ -87,7 +87,7 @@ const ActionCard = ({ title, description, icon }) => (
       {icon}
     </div>
     <h4 className="text-white font-semibold mb-1">{title}</h4>
-    <p className="text-gray-500 text-sm">{description}</p>
+    <p className="text-gray-300 text-sm">{description}</p>
   </div>
 );
 
@@ -100,7 +100,7 @@ const StatusRow = ({ label, value, status }) => {
 
   return (
     <div className="flex justify-between">
-      <span className="text-gray-400">{label}</span>
+      <span className="text-gray-200">{label}</span>
       <span className={status ? statusColors[status] : 'text-white'}>{value}</span>
     </div>
   );

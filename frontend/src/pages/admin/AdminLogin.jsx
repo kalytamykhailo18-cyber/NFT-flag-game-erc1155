@@ -31,7 +31,7 @@ const AdminLogin = () => {
 
         <form onSubmit={handleLogin}>
           <div className="mb-6">
-            <label className="block text-gray-400 text-sm mb-2">Admin API Key</label>
+            <label className="block text-gray-200 text-sm mb-2">Admin API Key</label>
             <input
               type="password"
               value={apiKey}
