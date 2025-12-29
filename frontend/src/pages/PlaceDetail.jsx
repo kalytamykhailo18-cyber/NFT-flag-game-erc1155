@@ -268,6 +268,17 @@ const PlaceDetail = () => {
                 ? 'Claim This Place!'
                 : 'Complete all pairs to claim'}
             </button>
+
+            {/* Create Auction Button - Only show if user claimed this place */}
+            {place.is_claimed && place.claimer?.wallet_address?.toLowerCase() === address?.toLowerCase() && (
+              <Link
+                to="/auctions"
+                state={{ placeId: place.id, placeName: place.name }}
+                className="block w-full mt-3 py-3 rounded-lg font-medium text-center bg-primary text-white hover:bg-primary/80 transition-colors"
+              >
+                Create Auction
+              </Link>
+            )}
           </div>
         </div>
 

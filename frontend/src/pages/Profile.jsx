@@ -202,30 +202,40 @@ const Profile = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {claimedPlaces.map((place) => (
-              <Link
+              <div
                 key={place.id}
-                to={`/places/${place.id}`}
-                className="bg-dark-lighter border border-gray-800 rounded-lg overflow-hidden hover:border-gray-700 transition-colors"
+                className="bg-dark-lighter border border-gray-800 rounded-lg overflow-hidden"
               >
-                <div className="aspect-video bg-dark">
-                  <IPFSImage
-                    uri={place.base_image_uri}
-                    alt={place.name}
-                    className="w-full h-full object-cover"
-                    fallbackText="No Image"
-                  />
-                </div>
+                <Link to={`/places/${place.id}`} className="block hover:opacity-80 transition-opacity">
+                  <div className="aspect-video bg-dark">
+                    <IPFSImage
+                      uri={place.base_image_uri}
+                      alt={place.name}
+                      className="w-full h-full object-cover"
+                      fallbackText="No Image"
+                    />
+                  </div>
+                </Link>
                 <div className="p-4">
-                  <h3 className="text-white font-semibold">{place.name}</h3>
-                  <p className="text-gray-200 text-sm mt-1">
-                    {place.municipality?.name}
-                  </p>
+                  <Link to={`/places/${place.id}`} className="block hover:text-primary transition-colors">
+                    <h3 className="text-white font-semibold">{place.name}</h3>
+                    <p className="text-gray-200 text-sm mt-1">
+                      {place.municipality?.name}
+                    </p>
+                  </Link>
                   <div className="flex justify-between items-center mt-3">
                     <span className="text-gray-300 text-sm">Token ID: {place.token_id}</span>
                     <span className="text-green-400 text-sm">Claimed</span>
                   </div>
+                  <Link
+                    to="/auctions"
+                    state={{ placeId: place.id, placeName: place.name }}
+                    className="block w-full mt-4 px-4 py-2 bg-primary text-white text-center rounded-lg hover:bg-primary/80 transition-colors"
+                  >
+                    Create Auction
+                  </Link>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )
