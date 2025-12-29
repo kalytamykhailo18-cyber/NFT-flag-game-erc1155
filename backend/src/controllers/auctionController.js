@@ -45,9 +45,9 @@ const getAuction = async (req, res, next) => {
         {
           association: 'bids',
           include: [{ association: 'bidder', attributes: ['id', 'wallet_address', 'username'] }],
-          order: [['amount', 'DESC'], ['created_at', 'ASC']],
         },
       ],
+      order: [['created_at', 'DESC']],
     });
 
     if (!auction) {
@@ -224,7 +224,7 @@ const placeBid = async (req, res, next) => {
       const final_price = parseFloat(auction.max_price) * (1 - discount);
 
       await auction.update({
-        status: 'completed',
+        status: 'ended',
         winner_id: user.id,
         final_price,
       });
@@ -323,11 +323,68 @@ const determineWinner = async (auction_id) => {
   };
 };
 
+/**
+ * End auction manually (seller only)
+ */
+const endAuction = async (req, res, next) => {
+  try {
+    const { wallet_address } = req.body;
+    const auction_id = parseInt(req.params.id);
+
+    const auction = await Auction.findByPk(auction_id, {
+      include: [{ association: 'seller', attributes: ['id', 'wallet_address'] }],
+    });
+
+    if (!auction) {
+      return res.status(404).json({
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Auction not found' },
+      });
+    }
+
+    // Only seller can end auction
+    if (auction.seller.wallet_address.toLowerCase() !== wallet_address.toLowerCase()) {
+      return res.status(403).json({
+        success: false,
+        error: { code: 'FORBIDDEN', message: 'Only the auction creator can end the auction' },
+      });
+    }
+
+    if (auction.status !== 'active') {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'Auction is not active' },
+      });
+    }
+
+    // Determine winner
+    const winnerInfo = await determineWinner(auction_id);
+
+    if (winnerInfo) {
+      await auction.update({
+        status: 'ended',
+        winner_id: winnerInfo.winner_id,
+        final_price: winnerInfo.winning_bid.amount,
+      });
+    } else {
+      // No bids, just end it
+      await auction.update({
+        status: 'ended',
+      });
+    }
+
+    res.json({ success: true, message: 'Auction ended successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAuctions,
   getAuction,
   createAuction,
   placeBid,
+  endAuction,
   cancelAuction,
   determineWinner,
 };

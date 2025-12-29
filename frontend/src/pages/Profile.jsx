@@ -13,6 +13,7 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [ownedSlices, setOwnedSlices] = useState([]);
   const [claimedPlaces, setClaimedPlaces] = useState([]);
+  const [wonAuctions, setWonAuctions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('slices');
   const [activeAuctions, setActiveAuctions] = useState(new Set());
@@ -41,6 +42,14 @@ const Profile = () => {
         const auctions = auctionsResponse.data || auctionsResponse || [];
         const activePlaceIds = new Set(auctions.map(a => a.place_id));
         setActiveAuctions(activePlaceIds);
+
+        // Get won auctions (where user is the winner)
+        const allAuctionsResponse = await api.getAuctions({});
+        const allAuctions = allAuctionsResponse.data || allAuctionsResponse || [];
+        const won = allAuctions.filter(
+          a => a.winner && a.winner.wallet_address?.toLowerCase() === address.toLowerCase()
+        );
+        setWonAuctions(won);
       } catch (err) {
         console.error('Failed to fetch user data:', err);
       } finally {
@@ -150,10 +159,77 @@ const Profile = () => {
         >
           Claimed Places ({claimedPlaces.length})
         </button>
+        <button
+          onClick={() => setActiveTab('won-auctions')}
+          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+            activeTab === 'won-auctions'
+              ? 'bg-primary text-white'
+              : 'bg-dark-lighter text-gray-200 hover:text-white'
+          }`}
+        >
+          Won Auctions ({wonAuctions.length})
+        </button>
       </div>
 
       {/* Content */}
-      {activeTab === 'slices' ? (
+      {activeTab === 'won-auctions' ? (
+        wonAuctions.length === 0 ? (
+          <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
+            <div className="text-gray-300 text-lg mb-2">No auctions won yet</div>
+            <Link to="/auctions" className="text-primary hover:text-primary/80">
+              Browse auctions to start bidding
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {wonAuctions.map((auction) => (
+              <div
+                key={auction.id}
+                className="bg-dark-lighter border border-gray-800 rounded-lg overflow-hidden"
+              >
+                <Link to={`/auctions/${auction.id}`} className="block hover:opacity-80 transition-opacity">
+                  <div className="aspect-video bg-dark relative">
+                    <IPFSImage
+                      uri={auction.place?.base_image_uri}
+                      alt={auction.place?.name}
+                      className="w-full h-full object-cover"
+                      fallbackText="No Image"
+                    />
+                    <div className="absolute top-2 right-2 px-2 py-1 bg-green-500/90 text-white text-xs rounded">
+                      Won
+                    </div>
+                  </div>
+                </Link>
+                <div className="p-4">
+                  <Link to={`/auctions/${auction.id}`} className="block hover:text-primary transition-colors">
+                    <h3 className="text-white font-semibold">{auction.place?.name || `Place #${auction.place_id}`}</h3>
+                  </Link>
+                  <div className="mt-3 space-y-2">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-300">Final Price:</span>
+                      <span className="text-primary font-bold">{config.formatPrice(auction.final_price)} MATIC</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-300">Status:</span>
+                      <span className="text-green-400 capitalize">{auction.status}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-300">Bids:</span>
+                      <span className="text-white">{auction.bids?.length || 0}</span>
+                    </div>
+                  </div>
+                  <Link
+                    to={`/auctions/${auction.id}`}
+                    className="block w-full mt-4 px-4 py-2 bg-primary text-white text-center rounded-lg hover:bg-primary/80 transition-colors"
+                  >
+                    View Details
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      ) : activeTab === 'slices' ? (
         ownedSlices.length === 0 ? (
           <div className="text-center py-16 bg-dark-lighter border border-gray-800 rounded-lg">
             <div className="text-gray-300 text-lg mb-2">No slices owned yet</div>

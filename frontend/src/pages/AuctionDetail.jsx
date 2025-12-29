@@ -18,6 +18,7 @@ const AuctionDetail = () => {
 
   const [bidAmount, setBidAmount] = useState('');
   const [bidding, setBidding] = useState(false);
+  const [ending, setEnding] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -45,6 +46,28 @@ const AuctionDetail = () => {
       alert(err.response?.data?.error?.message || 'Bid failed');
     } finally {
       setBidding(false);
+    }
+  };
+
+  const handleEndAuction = async () => {
+    if (!isConnected || !address) {
+      alert('Please connect your wallet first');
+      return;
+    }
+
+    if (!confirm('Are you sure you want to end this auction? This action cannot be undone.')) {
+      return;
+    }
+
+    setEnding(true);
+    try {
+      await api.endAuction(id, address);
+      dispatch(fetchAuctionDetail(id));
+      alert('Auction ended successfully!');
+    } catch (err) {
+      alert(err.response?.data?.error?.message || 'Failed to end auction');
+    } finally {
+      setEnding(false);
     }
   };
 
@@ -149,9 +172,18 @@ const AuctionDetail = () => {
             {isActive && (
               <div className="mt-6 space-y-4">
                 {isSeller ? (
-                  <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded text-center">
-                    <div className="text-yellow-400">You cannot bid on your own auction</div>
-                  </div>
+                  <>
+                    <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded text-center">
+                      <div className="text-yellow-400">You cannot bid on your own auction</div>
+                    </div>
+                    <button
+                      onClick={handleEndAuction}
+                      disabled={ending}
+                      className="w-full py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+                    >
+                      {ending ? 'Ending Auction...' : 'End Auction'}
+                    </button>
+                  </>
                 ) : (
                   <>
                     {/* Bid Input */}
@@ -195,26 +227,38 @@ const AuctionDetail = () => {
               <div className="text-gray-300 text-center py-4">No bids yet</div>
             ) : (
               <div className="space-y-3">
-                {auction.bids.map((bid, index) => (
-                  <div
-                    key={bid.id}
-                    className={`flex justify-between items-center p-3 rounded ${
-                      index === 0 ? 'bg-primary/10 border border-primary/30' : 'bg-dark'
-                    }`}
-                  >
-                    <div>
-                      <div className="text-white font-medium">
-                        {config.formatPrice(bid.amount)} MATIC
+                {[...auction.bids]
+                  .sort((a, b) => {
+                    // Sort by amount DESC, then by time ASC
+                    const amountDiff = parseFloat(b.amount) - parseFloat(a.amount);
+                    if (amountDiff !== 0) return amountDiff;
+                    const timeA = new Date(a.created_at || a.createdAt);
+                    const timeB = new Date(b.created_at || b.createdAt);
+                    return timeA - timeB;
+                  })
+                  .map((bid, index) => {
+                    const createdAt = bid.created_at || bid.createdAt;
+                    return (
+                      <div
+                        key={bid.id}
+                        className={`flex justify-between items-center p-3 rounded ${
+                          index === 0 ? 'bg-primary/10 border border-primary/30' : 'bg-dark'
+                        }`}
+                      >
+                        <div>
+                          <div className="text-white font-medium">
+                            {config.formatPrice(bid.amount)} MATIC
+                          </div>
+                          <div className="text-gray-300 text-sm">
+                            {config.truncateAddress(bid.bidder?.wallet_address)}
+                          </div>
+                        </div>
+                        <div className="text-gray-300 text-sm">
+                          {createdAt ? new Date(createdAt).toLocaleTimeString() : 'N/A'}
+                        </div>
                       </div>
-                      <div className="text-gray-300 text-sm">
-                        {config.truncateAddress(bid.bidder?.wallet_address)}
-                      </div>
-                    </div>
-                    <div className="text-gray-300 text-sm">
-                      {new Date(bid.created_at).toLocaleTimeString()}
-                    </div>
-                  </div>
-                ))}
+                    );
+                  })}
               </div>
             )}
           </div>

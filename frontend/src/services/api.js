@@ -99,7 +99,11 @@ export const createAuction = (data) => api.post('/auctions', data);
 export const placeBid = (auctionId, walletAddress, amount) =>
   api.post(`/auctions/${auctionId}/bid`, { wallet_address: walletAddress, amount });
 
-export const cancelAuction = (auctionId) => api.delete(`/auctions/${auctionId}`);
+export const endAuction = (auctionId, walletAddress) =>
+  api.post(`/auctions/${auctionId}/end`, { wallet_address: walletAddress });
+
+export const cancelAuction = (auctionId, walletAddress) =>
+  api.delete(`/auctions/${auctionId}`, { data: { wallet_address: walletAddress } });
 
 // ==================== Rankings (Public) ====================
 
