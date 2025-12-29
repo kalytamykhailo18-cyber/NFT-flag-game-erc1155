@@ -19,14 +19,17 @@ const sequelize = new Sequelize(config.databaseUrl, {
 const Country = require('../src/models/Country')(sequelize);
 const Region = require('../src/models/Region')(sequelize);
 const Municipality = require('../src/models/Municipality')(sequelize);
+const User = require('../src/models/User')(sequelize);
 const Place = require('../src/models/Place')(sequelize);
 const PlacePhotoSlice = require('../src/models/PlacePhotoSlice')(sequelize);
 
-// Define associations
+// Define associations (order matters for foreign key creation)
 Region.belongsTo(Country, { foreignKey: 'country_id' });
 Municipality.belongsTo(Region, { foreignKey: 'region_id' });
 Place.belongsTo(Municipality, { foreignKey: 'municipality_id' });
+Place.belongsTo(User, { foreignKey: 'claimed_by', as: 'claimer' });
 PlacePhotoSlice.belongsTo(Place, { foreignKey: 'place_id' });
+PlacePhotoSlice.belongsTo(User, { foreignKey: 'owned_by', as: 'owner' });
 
 /**
  * Generate placeholder slice URI
