@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { connectWallet as connectWalletService, disconnectWallet, getBalance } from '../../services/web3';
+import { connectWallet as connectWalletService, disconnectWallet as disconnectWalletService, getBalance } from '../../services/web3';
 
 const initialState = {
   address: null,
@@ -40,7 +40,7 @@ const walletSlice = createSlice({
   initialState,
   reducers: {
     disconnect: (state) => {
-      disconnectWallet();
+      disconnectWalletService();
       state.address = null;
       state.balance = '0';
       state.isConnected = false;
@@ -75,6 +75,9 @@ const walletSlice = createSlice({
 });
 
 export const { disconnect, clearError } = walletSlice.actions;
+
+// Alias for component compatibility
+export const disconnectWallet = disconnect;
 
 export const selectWallet = (state) => state.wallet;
 export const selectIsConnected = (state) => state.wallet.isConnected;

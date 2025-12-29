@@ -121,6 +121,9 @@ export const { setCurrentCountry, setCurrentRegion, setCurrentMunicipality, clea
 export const selectCountries = (state) => state.geography.countries;
 export const selectRegions = (state) => state.geography.regions;
 export const selectMunicipalities = (state) => state.geography.municipalities;
+export const selectCurrentCountry = (state) => state.geography.currentCountry;
+export const selectCurrentRegion = (state) => state.geography.currentRegion;
+export const selectCurrentMunicipality = (state) => state.geography.currentMunicipality;
 export const selectGeographyLoading = (state) => state.geography.loading;
 export const selectGeographyError = (state) => state.geography.error;
 

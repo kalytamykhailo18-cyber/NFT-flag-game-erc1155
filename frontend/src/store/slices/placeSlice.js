@@ -126,6 +126,9 @@ const placeSlice = createSlice({
 
 export const { clearCurrentPlace, clearError } = placeSlice.actions;
 
+// Alias for component compatibility
+export const fetchPlaceDetail = fetchPlace;
+
 export const selectPlaces = (state) => state.place.places;
 export const selectCurrentPlace = (state) => state.place.currentPlace;
 export const selectSlices = (state) => state.place.slices;

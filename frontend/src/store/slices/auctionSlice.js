@@ -116,6 +116,9 @@ const auctionSlice = createSlice({
 
 export const { clearCurrentAuction, clearError } = auctionSlice.actions;
 
+// Alias for component compatibility
+export const fetchAuctionDetail = fetchAuction;
+
 export const selectAuctions = (state) => state.auction.auctions;
 export const selectCurrentAuction = (state) => state.auction.currentAuction;
 export const selectAuctionLoading = (state) => state.auction.loading;
