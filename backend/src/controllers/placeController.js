@@ -59,16 +59,44 @@ const getPlace = async (req, res, next) => {
 
 /**
  * Get slices only for a place
+ * Hides slice images unless user has shown interest
  */
 const getPlaceSlices = async (req, res, next) => {
   try {
+    const place_id = req.params.id;
+    const { wallet_address } = req.query; // Optional - if provided, check interest
+
     const slices = await PlacePhotoSlice.findAll({
-      where: { place_id: req.params.id },
+      where: { place_id },
       include: [{ association: 'owner', attributes: ['id', 'wallet_address'] }],
       order: [['pair_number', 'ASC'], ['slice_position', 'ASC']],
     });
 
-    res.json({ success: true, data: slices });
+    // Check if user has shown interest
+    let hasInterest = false;
+    if (wallet_address) {
+      const user = await User.findOne({ where: { wallet_address: wallet_address.toLowerCase() } });
+      if (user) {
+        const interest = await Interest.findOne({
+          where: { place_id, user_id: user.id },
+        });
+        hasInterest = !!interest;
+      }
+    }
+
+    // Hide slice images if no interest
+    const filteredSlices = slices.map(slice => {
+      const sliceData = slice.toJSON();
+      if (!hasInterest && !sliceData.is_owned) {
+        // Hide image for non-interested users
+        sliceData.slice_uri = null;
+        sliceData.image_sha256 = null;
+        sliceData.hidden = true; // Flag to indicate image is hidden
+      }
+      return sliceData;
+    });
+
+    res.json({ success: true, data: filteredSlices, has_interest: hasInterest });
   } catch (error) {
     next(error);
   }

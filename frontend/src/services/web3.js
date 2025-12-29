@@ -4,6 +4,7 @@
  */
 import { ethers } from 'ethers';
 import config from '../config';
+import { getWalletProvider } from './walletDetector';
 
 // PlaceNFT ABI (relevant functions only)
 const PLACE_NFT_ABI = [
@@ -63,39 +64,33 @@ export const getSigner = async () => {
  * Connect wallet
  */
 export const connectWallet = async (walletType = 'metamask') => {
-  // Currently only MetaMask is supported
-  if (walletType === 'metamask') {
-    if (!isMetaMaskInstalled()) {
-      throw new Error('MetaMask is not installed. Please install MetaMask extension.');
+  try {
+    // Get the specific wallet provider
+    const provider = getWalletProvider(walletType);
+
+    if (!provider) {
+      throw new Error(`${walletType} wallet is not installed. Please install the wallet extension.`);
     }
 
-    try {
-      // Request accounts
-      const accounts = await window.ethereum.request({
-        method: 'eth_requestAccounts',
-      });
+    // Request accounts from the specific provider
+    const accounts = await provider.request({
+      method: 'eth_requestAccounts',
+    });
 
-      if (!accounts || accounts.length === 0) {
-        throw new Error('No accounts found');
-      }
-
-      // Switch to correct network
-      await switchNetwork();
-
-      return {
-        address: accounts[0],
-        walletType: 'metamask',
-      };
-    } catch (error) {
-      console.error('Wallet connection error:', error);
-      throw error;
+    if (!accounts || accounts.length === 0) {
+      throw new Error('No accounts found');
     }
-  } else if (walletType === 'walletconnect') {
-    throw new Error('WalletConnect is not implemented yet');
-  } else if (walletType === 'coinbase') {
-    throw new Error('Coinbase Wallet is not implemented yet');
-  } else {
-    throw new Error(`Unsupported wallet type: ${walletType}`);
+
+    // Switch to correct network
+    await switchNetwork();
+
+    return {
+      address: accounts[0],
+      walletType: walletType,
+    };
+  } catch (error) {
+    console.error('Wallet connection error:', error);
+    throw error;
   }
 };
 

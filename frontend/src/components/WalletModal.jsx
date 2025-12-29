@@ -1,45 +1,36 @@
 /**
  * WalletModal - Modal for selecting wallet type
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { connectWallet } from '../store/slices/walletSlice';
-
-const WALLET_TYPES = [
-  {
-    id: 'metamask',
-    name: 'MetaMask',
-    icon: '🦊',
-    description: 'Connect with MetaMask wallet',
-    checkInstalled: () => typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask,
-  },
-  {
-    id: 'walletconnect',
-    name: 'WalletConnect',
-    icon: '🔗',
-    description: 'Connect with WalletConnect',
-    checkInstalled: () => true, // Always available
-    disabled: true, // Not implemented yet
-  },
-  {
-    id: 'coinbase',
-    name: 'Coinbase Wallet',
-    icon: '💙',
-    description: 'Connect with Coinbase Wallet',
-    checkInstalled: () => typeof window.ethereum !== 'undefined' && window.ethereum.isCoinbaseWallet,
-    disabled: true, // Not implemented yet
-  },
-];
+import { getAllWalletTypes, clearWalletCache } from '../services/walletDetector';
 
 const WalletModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const { isConnecting, error } = useSelector((state) => state.wallet);
   const [selectedWallet, setSelectedWallet] = useState(null);
+  const [walletTypes, setWalletTypes] = useState([]);
 
-  const handleConnect = async (walletType) => {
-    setSelectedWallet(walletType);
+  useEffect(() => {
+    if (isOpen) {
+      // Clear cache and re-detect wallets when modal opens
+      clearWalletCache();
+      const wallets = getAllWalletTypes();
+      setWalletTypes(wallets);
+    }
+  }, [isOpen]);
+
+  const handleConnect = async (wallet) => {
+    if (!wallet.installed) {
+      // Open download page if wallet not installed
+      window.open(wallet.downloadUrl, '_blank');
+      return;
+    }
+
+    setSelectedWallet(wallet.id);
     try {
-      await dispatch(connectWallet(walletType)).unwrap();
+      await dispatch(connectWallet(wallet.id)).unwrap();
       onClose();
     } catch (err) {
       console.error('Connection error:', err);
@@ -90,61 +81,92 @@ const WalletModal = ({ isOpen, onClose }) => {
         )}
 
         {/* Wallet List */}
-        <div className="space-y-3">
-          {WALLET_TYPES.map((wallet) => {
-            const isInstalled = wallet.checkInstalled();
-            const isDisabled = wallet.disabled || !isInstalled;
-            const isLoading = isConnecting && selectedWallet === wallet.id;
+        <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+          {walletTypes.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              <p>No wallets detected. Please install a wallet extension.</p>
+            </div>
+          ) : (
+            walletTypes.map((wallet) => {
+              const isLoading = isConnecting && selectedWallet === wallet.id;
 
-            return (
-              <button
-                key={wallet.id}
-                onClick={() => !isDisabled && handleConnect(wallet.id)}
-                disabled={isDisabled || isConnecting}
-                className={`w-full p-4 rounded-lg border-2 transition-all ${
-                  isDisabled
-                    ? 'bg-gray-700/50 border-gray-600 cursor-not-allowed opacity-50'
-                    : 'bg-gray-700 border-gray-600 hover:border-primary hover:bg-gray-600'
-                } ${isLoading ? 'animate-pulse' : ''}`}
-              >
-                <div className="flex items-center gap-4">
-                  {/* Icon */}
-                  <div className="text-4xl">{wallet.icon}</div>
+              return (
+                <button
+                  key={wallet.id}
+                  onClick={() => handleConnect(wallet)}
+                  disabled={isConnecting}
+                  className={`w-full p-4 rounded-lg border-2 transition-all ${
+                    wallet.installed
+                      ? 'bg-gray-700 border-primary/50 hover:border-primary hover:bg-gray-600 hover:scale-[1.02]'
+                      : 'bg-gray-700/30 border-gray-600 hover:border-gray-500'
+                  } ${isLoading ? 'animate-pulse border-primary' : ''}`}
+                >
+                  <div className="flex items-center gap-4">
+                    {/* Icon */}
+                    <div className="text-4xl relative">
+                      {wallet.icon}
+                      {/* Installed badge */}
+                      {wallet.installed && (
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800" />
+                      )}
+                    </div>
 
-                  {/* Content */}
-                  <div className="flex-1 text-left">
-                    <h3 className="text-white font-semibold">{wallet.name}</h3>
-                    <p className="text-gray-400 text-sm">
-                      {!isInstalled
-                        ? 'Not installed'
-                        : wallet.disabled
-                        ? 'Coming soon'
-                        : isLoading
-                        ? 'Connecting...'
-                        : wallet.description}
-                    </p>
+                    {/* Content */}
+                    <div className="flex-1 text-left">
+                      <div className="flex items-center gap-2">
+                        <h3 className={`font-semibold ${wallet.installed ? 'text-white' : 'text-gray-400'}`}>
+                          {wallet.name}
+                        </h3>
+                        {wallet.installed && (
+                          <span className="px-2 py-0.5 text-xs bg-green-500/20 text-green-400 rounded-full border border-green-500/30">
+                            Installed
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-gray-400 text-sm mt-1">
+                        {isLoading
+                          ? 'Connecting...'
+                          : wallet.installed
+                          ? wallet.description || 'Click to connect'
+                          : 'Click to install'}
+                      </p>
+                    </div>
+
+                    {/* Arrow or Download Icon */}
+                    {wallet.installed ? (
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                        />
+                      </svg>
+                    )}
                   </div>
-
-                  {/* Arrow */}
-                  {!isDisabled && (
-                    <svg
-                      className="w-5 h-5 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  )}
-                </div>
-              </button>
-            );
-          })}
+                </button>
+              );
+            })
+          )}
         </div>
 
         {/* Footer */}
