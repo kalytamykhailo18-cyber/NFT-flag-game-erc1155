@@ -155,26 +155,38 @@ const Profile = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {ownedSlices.map((slice) => (
+            {ownedSlices
+              .sort((a, b) => {
+                // Sort by place_id first
+                if (a.place_id !== b.place_id) return a.place_id - b.place_id;
+                // Then by pair_number
+                if (a.slice?.pair_number !== b.slice?.pair_number) {
+                  return (a.slice?.pair_number || 0) - (b.slice?.pair_number || 0);
+                }
+                // Then by position (left before right)
+                const posOrder = { left: 0, right: 1 };
+                return (posOrder[a.slice?.slice_position] || 0) - (posOrder[b.slice?.slice_position] || 0);
+              })
+              .map((userSlice) => (
               <Link
-                key={slice.id}
-                to={`/places/${slice.place_id}`}
+                key={userSlice.id}
+                to={`/places/${userSlice.place_id}`}
                 className="bg-dark-lighter border border-gray-800 rounded-lg overflow-hidden hover:border-gray-700 transition-colors"
               >
                 <div className="aspect-square bg-dark">
                   <IPFSImage
-                    uri={slice.slice_uri}
-                    alt={`Slice ${slice.pair_number}-${slice.slice_position}`}
+                    uri={userSlice.slice?.slice_uri}
+                    alt={`Slice ${userSlice.slice?.pair_number}-${userSlice.slice?.slice_position}`}
                     className="w-full h-full object-cover"
                     fallbackText="No Image"
                   />
                 </div>
                 <div className="p-2">
                   <div className="text-white text-sm font-medium truncate">
-                    {slice.place?.name || `Place #${slice.place_id}`}
+                    {userSlice.place?.name || `Place #${userSlice.place_id}`}
                   </div>
                   <div className="text-gray-300 text-xs">
-                    Pair {slice.pair_number}, Pos {slice.slice_position}
+                    Pair {userSlice.slice?.pair_number}, Pos {userSlice.slice?.slice_position}
                   </div>
                 </div>
               </Link>

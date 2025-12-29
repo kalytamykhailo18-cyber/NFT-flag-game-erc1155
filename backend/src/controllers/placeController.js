@@ -350,7 +350,7 @@ const claimPlace = async (req, res, next) => {
     let completedPairs = 0;
     for (let i = 1; i <= place.pair_count; i++) {
       const positions = slicesByPair[i] || [];
-      if (positions.includes(1) && positions.includes(2)) {
+      if (positions.includes('left') && positions.includes('right')) {
         completedPairs++;
       }
     }
