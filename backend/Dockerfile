@@ -1,23 +1,22 @@
-# Backend Dockerfile for Municipal Place NFT Game
-# Multi-stage build for production and development
+# Backend Dockerfile - Multi-stage build
+# Supports both development and production environments
 
 # ============================================
-# Base Stage - Common dependencies
+# Base Stage - Common setup
 # ============================================
 FROM node:18-alpine AS base
 
-# Install system dependencies
+# Install system dependencies for native modules (sharp, etc.)
 RUN apk add --no-cache \
     python3 \
     make \
     g++ \
     vips-dev \
-    wget \
-    curl
+    wget
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files for dependency installation
 COPY package*.json ./
 
 # ============================================
@@ -25,80 +24,75 @@ COPY package*.json ./
 # ============================================
 FROM base AS development
 
-# Install all dependencies (including dev)
+# Install all dependencies (including devDependencies)
 RUN npm ci
 
-# Copy source code
+# Copy application source
 COPY . .
 
-# Create necessary directories
+# Create required directories
 RUN mkdir -p uploads logs
 
 EXPOSE 3000
 
-# Development with hot reload
+# Use nodemon for hot-reload in development
 CMD ["npm", "run", "dev"]
 
 # ============================================
-# Production Build Stage
+# Production Dependencies Stage
 # ============================================
-FROM base AS production-build
+FROM base AS prod-deps
 
 # Install only production dependencies
-RUN npm ci --omit=dev
-
-# Copy source code
-COPY . .
+RUN npm ci --omit=dev --ignore-scripts && \
+    npm cache clean --force
 
 # ============================================
 # Production Stage
 # ============================================
 FROM node:18-alpine AS production
 
-# Install runtime dependencies only
+# Install minimal runtime dependencies
 RUN apk add --no-cache \
     vips \
     wget \
-    postgresql-client \
-    netcat-openbsd
+    postgresql-client
 
 WORKDIR /app
 
-# Copy production dependencies from build stage
-COPY --from=production-build /app/node_modules ./node_modules
-COPY --from=production-build /app/package*.json ./
+# Copy production dependencies from previous stage
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY package*.json ./
 
 # Copy application code
-COPY --from=production-build /app/src ./src
-COPY --from=production-build /app/database ./database
-COPY --from=production-build /app/scripts ./scripts
+COPY src ./src
+COPY database ./database
+COPY scripts ./scripts
 
-# Copy and set permissions for entrypoint script
-COPY --from=production-build /app/scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+# Set up entrypoint script
+COPY scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Create necessary directories with proper permissions
+# Create directories
 RUN mkdir -p uploads logs && \
     chmod 755 uploads logs
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
-
-# Set ownership
-RUN chown -R nodejs:nodejs /app
+    adduser -S nodejs -u 1001 && \
+    chown -R nodejs:nodejs /app
 
 # Switch to non-root user
 USER nodejs
 
 EXPOSE 3000
 
-# Health check
+# Health check endpoint
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD wget --quiet --tries=1 --spider http://localhost:3000/health || exit 1
 
-# Use entrypoint script
+# Entrypoint handles DB migrations
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-# Start application
+# Start Node.js application
 CMD ["node", "src/app.js"]

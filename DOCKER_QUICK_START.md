@@ -1,167 +1,124 @@
 # 🐳 Docker Quick Start
 
-Get the Municipal Place NFT application running in 3 minutes with Docker!
+Run the NFT Place Game on Ubuntu VM in minutes with Docker.
 
-## ✅ Prerequisites
-
-- Docker 20.10+ installed
-- Docker Compose 2.0+ installed
-
-**No PostgreSQL installation required!** Docker handles everything.
+**No dependencies needed** - Docker handles PostgreSQL, Node.js, and everything else!
 
 ---
 
-## 🚀 Quick Start (3 Steps)
+## 🚀 Quick Start
 
-### 1. Configure Environment
+### 1. Install Docker (Ubuntu VM Only)
 
 ```bash
-# Copy example environment file
-cp .env.example .env
+# Check if already installed
+docker --version
 
-# Edit .env and set these REQUIRED values:
+# If not installed
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER
+
+# Log out and back in, then verify
+docker compose version
+```
+
+### 2. Configure & Run
+
+```bash
+# Create environment file
+make setup
+
+# Edit required values
 nano .env
+# Set: CONTRACT_ADDRESS, ADMIN_PRIVATE_KEY, PINATA_JWT,
+#      PINATA_API_KEY, PINATA_SECRET_KEY, DB_PASSWORD, ADMIN_API_KEY
+
+# Start application
+make up
+
+# Watch backend startup
+make logs-backend
 ```
 
-**Required values to set:**
-- `CONTRACT_ADDRESS` - Your deployed contract
-- `ADMIN_PRIVATE_KEY` - Admin wallet private key
-- `PINATA_JWT` - Pinata JWT token
-- `PINATA_API_KEY` - Pinata API key
-- `PINATA_SECRET_KEY` - Pinata secret key
-- `DB_PASSWORD` - Database password (change from default!)
-- `ADMIN_API_KEY` - Admin API key (change from default!)
-
-### 2. Start Application
-
-```bash
-# Start all services
-docker compose up -d
-
-# View startup logs
-docker compose logs -f backend
-```
-
-**Wait for this message:**
-```
-✓ Migrations completed successfully
-Starting application...
-```
+**Wait for:** `✓ Migrations completed successfully`
 
 ### 3. Access Application
 
 - **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:3000
+- **Backend**: http://localhost:3000
 - **Health Check**: http://localhost:3000/health
-
----
-
-## 📝 What Happens Automatically
-
-When you run `docker compose up -d`:
-
-1. ✅ PostgreSQL starts in a container
-2. ✅ System waits for database to be ready
-3. ✅ Validates all required environment variables
-4. ✅ Runs database migrations automatically
-5. ✅ Backend API starts
-6. ✅ Frontend starts
-
-**No manual steps needed!**
 
 ---
 
 ## 🔧 Common Commands
 
 ```bash
-# Stop application
-docker compose down
+# Start/Stop
+make up          # Start all services
+make down        # Stop all services
+make restart     # Restart services
+make rebuild     # Rebuild and restart
 
-# View logs
-docker compose logs -f
+# Monitoring
+make logs        # All logs
+make logs-backend   # Backend only
+make logs-frontend  # Frontend only
+make status      # Service status
+make health      # Health checks
 
-# Restart services
-docker compose restart
+# Database
+make db-shell    # PostgreSQL shell
+make db-reset    # Reset DB (WARNING: deletes data!)
+make migrate     # Run migrations
+make seed        # Run seeders
 
-# Rebuild containers
-docker compose up -d --build
+# Utilities
+make shell-backend   # Backend container shell
+make update-images   # Update place images script
 
-# Run updatePlaceImages script
-docker compose exec backend node scripts/updatePlaceImages.js
-
-# Access backend shell
-docker compose exec backend sh
-
-# Access database
-docker compose exec postgres psql -U postgres -d place_nft_1155
+# Help
+make help        # Show all commands
 ```
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Container won't start?
-
+**Services won't start?**
 ```bash
-# Check logs
-docker compose logs backend
-
-# Check if ports are in use
-sudo lsof -i :3000
-sudo lsof -i :5173
+make logs-backend       # Check backend logs
+make logs-db            # Check database logs
+sudo lsof -i :3000      # Check if port in use
 ```
 
-### Missing environment variables error?
-
-1. Check `.env` file exists in project root
-2. Verify all REQUIRED variables are set
-3. Restart: `docker compose restart backend`
-
-### Migration errors?
-
+**Missing environment variables?**
 ```bash
-# View migration logs
-docker compose logs backend | grep migration
-
-# Reset database (WARNING: deletes data!)
-docker compose down -v
-docker compose up -d
+# Verify .env exists and has required values
+ls -la .env
+make restart
 ```
 
----
-
-## 📚 Full Documentation
-
-For complete documentation, see:
-- **[docs/DOCKER.md](docs/DOCKER.md)** - Complete Docker guide
-- **[.env.example](.env.example)** - All environment variables
-- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture
-
----
-
-## 🎯 Ubuntu VM (No PostgreSQL Installed)
-
-Docker works perfectly on Ubuntu VMs without PostgreSQL installed!
-
+**Database migration errors?**
 ```bash
-# Install Docker on Ubuntu
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-sudo usermod -aG docker $USER
+make db-reset    # WARNING: Deletes all data
+make up
+```
 
-# Log out and log back in
-
-# Install Docker Compose
-sudo apt-get update
-sudo apt-get install docker-compose-plugin
-
-# Verify
-docker --version
-docker compose version
-
-# Then follow Quick Start steps above!
+**Port already in use?**
+```bash
+# Stop conflicting service or change port in .env
+# Example: BACKEND_PORT=3001, FRONTEND_PORT=5174
 ```
 
 ---
 
-**✅ That's it!** Your application is now running in Docker containers.
+## 📦 What's Included
+
+Docker runs these services in isolated containers:
+- **PostgreSQL 15** - Database
+- **Node.js 18** - Backend runtime
+- **Vite** - Frontend development server (dev mode)
+- **Nginx** - Frontend static server (production mode)
+
+Your Ubuntu VM stays clean - no manual installation needed!

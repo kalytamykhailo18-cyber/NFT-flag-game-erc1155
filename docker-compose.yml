@@ -2,7 +2,7 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: municipal-nft-db
+    container_name: nft-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_NAME:-place_nft_1155}
@@ -12,9 +12,8 @@ services:
       - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
     networks:
-      - municipal-network
+      - app-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-place_nft_1155}"]
       interval: 10s
@@ -27,7 +26,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: ${NODE_ENV:-production}
-    container_name: municipal-nft-backend
+    container_name: nft-backend
     restart: unless-stopped
     depends_on:
       postgres:
@@ -35,36 +34,29 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       PORT: 3000
-
       # Database
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: ${DB_NAME:-place_nft_1155}
       DB_USER: ${DB_USER:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-postgres}
-
       # Blockchain
       BLOCKCHAIN_PROVIDER_URL: ${BLOCKCHAIN_PROVIDER_URL:-https://rpc-amoy.polygon.technology}
       CONTRACT_ADDRESS: ${CONTRACT_ADDRESS}
       ADMIN_PRIVATE_KEY: ${ADMIN_PRIVATE_KEY}
       CHAIN_ID: ${CHAIN_ID:-80002}
-
       # IPFS / Pinata
       IPFS_API_URL: ${IPFS_API_URL:-http://ipfs:5001}
       IPFS_GATEWAY_URL: ${IPFS_GATEWAY_URL:-https://gateway.pinata.cloud/ipfs}
       PINATA_JWT: ${PINATA_JWT}
       PINATA_API_KEY: ${PINATA_API_KEY}
       PINATA_SECRET_KEY: ${PINATA_SECRET_KEY}
-
-      # External APIs (for scripts)
+      # External APIs
       SERP_API_KEY: ${SERP_API_KEY}
-
       # Admin
       ADMIN_API_KEY: ${ADMIN_API_KEY:-your-secret-admin-key}
-
-      # Optional - for seeders
+      # Seeders
       RUN_SEEDERS: ${RUN_SEEDERS:-false}
-
       # CORS
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
     ports:
@@ -73,7 +65,7 @@ services:
       - ./backend/uploads:/app/uploads
       - ./backend/logs:/app/logs
     networks:
-      - municipal-network
+      - app-network
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
       interval: 30s
@@ -95,47 +87,44 @@ services:
         VITE_RPC_URL: ${VITE_RPC_URL:-https://rpc-amoy.polygon.technology}
         VITE_BLOCK_EXPLORER: ${VITE_BLOCK_EXPLORER:-https://amoy.polygonscan.com}
         VITE_IPFS_GATEWAY: ${VITE_IPFS_GATEWAY:-https://gateway.pinata.cloud/ipfs}
-    container_name: municipal-nft-frontend
+    container_name: nft-frontend
     restart: unless-stopped
     depends_on:
       - backend
     ports:
       - "${FRONTEND_PORT:-5173}:80"
     networks:
-      - municipal-network
+      - app-network
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80"]
       interval: 30s
       timeout: 10s
       retries: 3
 
-  # IPFS Node (Optional - for local IPFS)
+  # IPFS Node (Optional - use with --profile with-ipfs)
   ipfs:
     image: ipfs/kubo:latest
-    container_name: municipal-nft-ipfs
+    container_name: nft-ipfs
     restart: unless-stopped
     environment:
-      - IPFS_PROFILE=server
+      IPFS_PROFILE: server
     ports:
-      - "4001:4001"     # IPFS swarm
-      - "${IPFS_API_PORT:-5001}:5001"     # IPFS API
-      - "${IPFS_GATEWAY_PORT:-8080}:8080"     # IPFS Gateway
+      - "4001:4001"
+      - "${IPFS_API_PORT:-5001}:5001"
+      - "${IPFS_GATEWAY_PORT:-8080}:8080"
     volumes:
       - ipfs_data:/data/ipfs
       - ipfs_staging:/export
     networks:
-      - municipal-network
+      - app-network
     profiles:
       - with-ipfs
 
 volumes:
   postgres_data:
-    driver: local
   ipfs_data:
-    driver: local
   ipfs_staging:
-    driver: local
 
 networks:
-  municipal-network:
+  app-network:
     driver: bridge
