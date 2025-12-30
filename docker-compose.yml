@@ -25,14 +25,14 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-      target: ${NODE_ENV:-production}
+      target: development
     container_name: nft-backend
     restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
     environment:
-      NODE_ENV: ${NODE_ENV:-production}
+      NODE_ENV: development
       PORT: 3000
       # Database
       DB_HOST: postgres
@@ -78,7 +78,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      target: ${NODE_ENV:-production}
+      target: development
       args:
         VITE_API_URL: ${VITE_API_URL:-http://localhost:3000/api}
         VITE_CONTRACT_ADDRESS: ${CONTRACT_ADDRESS}
@@ -92,11 +92,11 @@ services:
     depends_on:
       - backend
     ports:
-      - "${FRONTEND_PORT:-5173}:80"
+      - "${FRONTEND_PORT:-5173}:5173"
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5173"]
       interval: 30s
       timeout: 10s
       retries: 3

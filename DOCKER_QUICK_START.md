@@ -49,7 +49,10 @@ nano .env
 docker stop $(docker ps -q)
 
 # Start all services
+make down
+make build
 make up
+
 
 # Watch logs
 make logs-backend
