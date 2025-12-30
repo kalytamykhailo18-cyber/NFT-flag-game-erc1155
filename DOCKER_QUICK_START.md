@@ -45,6 +45,9 @@ nano .env
 ### 3. Start Application
 
 ```bash
+# Stop other Docker projects to free up ports
+docker stop $(docker ps -q)
+
 # Start all services
 make up
 
@@ -118,8 +121,11 @@ make up
 
 **Port already in use?**
 ```bash
-# Stop conflicting service or change port in .env
-# Example: BACKEND_PORT=3001, FRONTEND_PORT=5174
+# Stop all other Docker projects
+docker stop $(docker ps -q)
+
+# Then start this project
+make up
 ```
 
 ---
