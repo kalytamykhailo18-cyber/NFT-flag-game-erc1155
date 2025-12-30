@@ -5,9 +5,9 @@ services:
     container_name: nft-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DB_NAME:-place_nft_1155}
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: place_nft_1155
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: a
     ports:
       - "${DB_PORT:-5432}:5432"
     volumes:
