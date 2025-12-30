@@ -9,7 +9,6 @@ help:
 	@echo "================================"
 	@echo ""
 	@echo "Setup:"
-	@echo "  make setup       - Create .env from .env.example"
 	@echo "  make build       - Build Docker images"
 	@echo ""
 	@echo "Start/Stop:"
@@ -43,25 +42,6 @@ help:
 	@echo "  make shell-frontend - Frontend shell"
 	@echo "  make update-images  - Run image update script"
 	@echo "  make health      - Check service health"
-
-# Setup
-setup:
-	@if [ ! -f .env ]; then \
-		echo "Creating .env file from .env.example..."; \
-		cp .env.example .env; \
-		echo "✓ .env file created"; \
-		echo ""; \
-		echo "⚠️  IMPORTANT: Edit .env and set required values:"; \
-		echo "   - CONTRACT_ADDRESS"; \
-		echo "   - ADMIN_PRIVATE_KEY"; \
-		echo "   - PINATA_JWT"; \
-		echo "   - PINATA_API_KEY"; \
-		echo "   - PINATA_SECRET_KEY"; \
-		echo "   - DB_PASSWORD"; \
-		echo "   - ADMIN_API_KEY"; \
-	else \
-		echo "✓ .env file already exists"; \
-	fi
 
 # Build
 build:

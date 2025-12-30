@@ -23,27 +23,38 @@ sudo usermod -aG docker $USER
 docker compose version
 ```
 
-### 2. Configure & Run
+### 2. Configure Environment
 
 ```bash
-# Create environment file
-make setup
+# Copy example to create .env file
+cp .env.example .env
 
-# Edit required values
+# Edit and set ALL required values
 nano .env
-# Set: CONTRACT_ADDRESS, ADMIN_PRIVATE_KEY, PINATA_JWT,
-#      PINATA_API_KEY, PINATA_SECRET_KEY, DB_PASSWORD, ADMIN_API_KEY
+```
 
-# Start application
+**Required values in .env:**
+- `CONTRACT_ADDRESS` - Your deployed contract address
+- `ADMIN_PRIVATE_KEY` - Admin wallet private key
+- `PINATA_JWT` - Pinata JWT token
+- `PINATA_API_KEY` - Pinata API key
+- `PINATA_SECRET_KEY` - Pinata secret key
+- `DB_PASSWORD` - Change from default!
+- `ADMIN_API_KEY` - Change from default!
+
+### 3. Start Application
+
+```bash
+# Start all services
 make up
 
-# Watch backend startup
+# Watch logs
 make logs-backend
 ```
 
 **Wait for:** `✓ Migrations completed successfully`
 
-### 3. Access Application
+### 4. Access Application
 
 - **Frontend**: http://localhost:5173
 - **Backend**: http://localhost:3000
