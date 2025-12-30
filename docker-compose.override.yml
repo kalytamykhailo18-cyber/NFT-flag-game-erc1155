@@ -2,8 +2,6 @@
 # This file extends docker-compose.yml with development-specific settings
 # Active by default when running: docker-compose up
 
-version: '3.8'
-
 services:
   backend:
     # Mount source code for hot-reload

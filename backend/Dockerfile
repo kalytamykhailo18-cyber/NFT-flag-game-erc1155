@@ -45,7 +45,7 @@ CMD ["npm", "run", "dev"]
 FROM base AS production-build
 
 # Install only production dependencies
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 # Copy source code
 COPY . .
