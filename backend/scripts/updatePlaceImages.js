@@ -338,10 +338,10 @@ async function processPlace(place) {
   // Mint NFT on blockchain if metadata exists and not already minted
   if (metadataUri && metadataHash) {
     try {
-      console.log(`    ⏳ Minting NFT for token_id ${place.id}...`);
+      console.log(`    ⏳ Minting NFT for token_id ${place.token_id}...`);
 
       const mintResult = await blockchainService.mintPlace(
-        place.id,        // token_id
+        place.token_id,  // token_id (not place.id!)
         metadataUri,     // ipfs://...
         metadataHash     // IPFS hash
       );
@@ -466,6 +466,7 @@ async function main() {
   // Map to simple objects with municipality and region names
   const places = placesRaw.map((p) => ({
     id: p.id,
+    token_id: p.token_id,
     name: p.name,
     location_type: p.location_type,
     category: p.category,

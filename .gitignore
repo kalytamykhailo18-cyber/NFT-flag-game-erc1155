@@ -19,6 +19,7 @@ docs/
 output1/
 .claude/
 overview/
+docs-es/
 
 # Database
 *.db
